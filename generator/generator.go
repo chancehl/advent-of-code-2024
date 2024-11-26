@@ -10,7 +10,7 @@ import (
 )
 
 const TOKEN = "xxx"
-const MODE = 0644
+const MODE = 0777
 
 func main() {
 	day := flag.Int("d", 0, "the day you are completing")
@@ -23,23 +23,44 @@ func main() {
 
 	flag.Parse()
 
+	directoryName := strings.ReplaceAll("day_xxx", strings.ToLower(TOKEN), numberToCamelCase(*day))
 	fileName := strings.ReplaceAll("day_xxx", strings.ToLower(TOKEN), numberToCamelCase(*day))
 	mainFileContents := strings.ReplaceAll(template, strings.ToUpper(TOKEN), numberToPascalCase(*day))
 	testFileContents := strings.ReplaceAll(testTemplate, strings.ToUpper(TOKEN), numberToPascalCase(*day))
 
-	fmt.Println(mainFileContents, testFileContents)
+	mainFileName := fmt.Sprintf("%s.go", fileName)
+	testFileName := fmt.Sprintf("%s_test.go", fileName)
+	inputFileName := "input.txt"
 
-	absoluteOutputPath := getAbsolutePath(fileName + "/" + fmt.Sprintf("%s.go", fileName))
-	absoluteTestOutputPath := getAbsolutePath(fileName + "/" + fmt.Sprintf("%s_test.go", fileName))
+	relativeMainFilePath := filepath.Join(directoryName, mainFileName)
+	relativeTestFilePath := filepath.Join(directoryName, testFileName)
+	relativeInputFilePath := filepath.Join(directoryName, inputFileName)
 
-	fmt.Println(absoluteOutputPath, absoluteTestOutputPath)
+	absoluteMainFile := getAbsolutePath(relativeMainFilePath)
+	absoluteTestFile := getAbsolutePath(relativeTestFilePath)
+	absoluteInputFile := getAbsolutePath(relativeInputFilePath)
 
-	if err := os.Mkdir(fileName, MODE); err != nil {
+	if err := os.Mkdir(directoryName, MODE); err != nil {
 		log.Fatalf("could not create output directory: %v", err)
 	}
-	if err := os.WriteFile(absoluteOutputPath, []byte(mainFileContents), MODE); err != nil {
+	if err := os.WriteFile(absoluteMainFile, []byte(mainFileContents), MODE); err != nil {
+		log.Fatalf("could not create output file: %v", err)
 	}
-	os.WriteFile(absoluteTestOutputPath, []byte(testFileContents), MODE)
+	if err := os.WriteFile(absoluteTestFile, []byte(testFileContents), MODE); err != nil {
+		log.Fatalf("could not create output test file: %v", err)
+	}
+	if err := os.WriteFile(absoluteInputFile, []byte{}, MODE); err != nil {
+		log.Fatalf("could not create input file: %v", err)
+	}
+
+	fmt.Printf(`[success] Generated the following files:
+
+- %s/
+	- %s
+	- %s
+	- %s
+
+Happy hacking 🎅`, directoryName, mainFileName, testFileName, inputFileName)
 }
 
 func getAbsolutePath(relative string) string {
