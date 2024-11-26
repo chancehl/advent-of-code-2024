@@ -9,7 +9,6 @@ import (
 	"strings"
 )
 
-const TOKEN = "xxx"
 const MODE = 0777
 
 type generatedFiles struct {
@@ -88,12 +87,17 @@ Happy hacking 🎅`, solutionsDirectory, tokenizedDay, mainFileName, testFileNam
 
 func tokenizeDay(day int) string {
 	camelCaseDay := formatDay(day, Camel)
-	return strings.ReplaceAll("day_xxx", strings.ToLower(TOKEN), camelCaseDay)
+	return strings.ReplaceAll("day_xxx", "xxx", camelCaseDay)
 }
 
 func tokenizeTemplate(day int, contents string) string {
 	pascalCaseDay := formatDay(day, Pascal)
-	return strings.ReplaceAll(contents, strings.ToUpper(TOKEN), pascalCaseDay)
+	camelCaseDay := formatDay(day, Camel)
+
+	pascalized := strings.ReplaceAll(contents, "XXX", pascalCaseDay)
+	camelized := strings.ReplaceAll(pascalized, "xxx", camelCaseDay)
+
+	return camelized
 }
 
 func getRelativePaths(solutionsDir string, dayDir string, fileNames fileNames) (paths relativeFilePaths) {

@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	path, err := filepath.Abs("solutions/day_xxx/input.txt")
+	path, err := filepath.Abs("solutions/day_one/input.txt")
 	if err != nil {
 		log.Fatalf("failed to construct path to input: %v", err)
 	}
@@ -19,10 +19,10 @@ func main() {
 		log.Fatalf("failed to read %s: %v", path, err)
 	}
 
-	fmt.Println(dayXXXSolution(input))
+	fmt.Println(dayOneSolution(input))
 }
 
-func dayXXXSolution(lines []string) (int, int) {
+func dayOneSolution(lines []string) (int, int) {
 	one := PartOne(lines)
 	two := PartTwo(lines)
 
