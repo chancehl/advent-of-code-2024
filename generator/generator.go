@@ -12,6 +12,16 @@ import (
 const TOKEN = "xxx"
 const MODE = 0777
 
+type generatedFiles struct {
+	main  string
+	test  string
+	input string
+}
+
+type fileNames generatedFiles
+type relativeFilePaths generatedFiles
+type absoluteFilePaths generatedFiles
+
 type Case int
 
 const (
@@ -30,38 +40,38 @@ func main() {
 
 	flag.Parse()
 
-	camelCaseDay := formatDay(*day, Camel)
-	pascalCaseDay := formatDay(*day, Pascal)
-
 	solutionsDirectory := "solutions"
 
-	dayDirectory := strings.ReplaceAll("day_xxx", strings.ToLower(TOKEN), camelCaseDay)
-	fileName := strings.ReplaceAll("day_xxx", strings.ToLower(TOKEN), camelCaseDay)
-	mainFileContents := strings.ReplaceAll(template, strings.ToUpper(TOKEN), pascalCaseDay)
-	testFileContents := strings.ReplaceAll(testTemplate, strings.ToUpper(TOKEN), pascalCaseDay)
+	tokenizedDay := tokenizeDay(*day)
+	mainFileContents := tokenizeTemplate(*day, template)
+	testFileContents := tokenizeTemplate(*day, testTemplate)
 
-	mainFileName := fmt.Sprintf("%s.go", fileName)
-	testFileName := fmt.Sprintf("%s_test.go", fileName)
+	mainFileName := fmt.Sprintf("%s.go", tokenizedDay)
+	testFileName := fmt.Sprintf("%s_test.go", tokenizedDay)
 	inputFileName := "input.txt"
 
-	relativeMainFilePath := filepath.Join(solutionsDirectory, dayDirectory, mainFileName)
-	relativeTestFilePath := filepath.Join(solutionsDirectory, dayDirectory, testFileName)
-	relativeInputFilePath := filepath.Join(solutionsDirectory, dayDirectory, inputFileName)
+	relativePaths := getRelativePaths(solutionsDirectory, tokenizedDay, fileNames{
+		main:  mainFileName,
+		test:  testFileName,
+		input: inputFileName,
+	})
 
-	absoluteMainFile := getAbsolutePath(relativeMainFilePath)
-	absoluteTestFile := getAbsolutePath(relativeTestFilePath)
-	absoluteInputFile := getAbsolutePath(relativeInputFilePath)
+	absolutePaths := getAbsoluteFilePaths(relativeFilePaths{
+		main:  relativePaths.main,
+		test:  relativePaths.test,
+		input: relativePaths.input,
+	})
 
-	if err := os.MkdirAll(filepath.Join(solutionsDirectory, dayDirectory), MODE); err != nil {
+	if err := os.MkdirAll(filepath.Join(solutionsDirectory, tokenizedDay), MODE); err != nil {
 		log.Fatalf("could not create output directory: %v", err)
 	}
-	if err := os.WriteFile(absoluteMainFile, []byte(mainFileContents), MODE); err != nil {
+	if err := os.WriteFile(absolutePaths.main, []byte(mainFileContents), MODE); err != nil {
 		log.Fatalf("could not create output file: %v", err)
 	}
-	if err := os.WriteFile(absoluteTestFile, []byte(testFileContents), MODE); err != nil {
+	if err := os.WriteFile(absolutePaths.test, []byte(testFileContents), MODE); err != nil {
 		log.Fatalf("could not create output test file: %v", err)
 	}
-	if err := os.WriteFile(absoluteInputFile, []byte{}, MODE); err != nil {
+	if err := os.WriteFile(absolutePaths.input, []byte{}, MODE); err != nil {
 		log.Fatalf("could not create input file: %v", err)
 	}
 
@@ -73,7 +83,38 @@ func main() {
 		- %s
 		- %s
 
-Happy hacking 🎅`, solutionsDirectory, dayDirectory, mainFileName, testFileName, inputFileName)
+Happy hacking 🎅`, solutionsDirectory, tokenizedDay, mainFileName, testFileName, inputFileName)
+}
+
+func tokenizeDay(day int) string {
+	camelCaseDay := formatDay(day, Camel)
+	return strings.ReplaceAll("day_xxx", strings.ToLower(TOKEN), camelCaseDay)
+}
+
+func tokenizeTemplate(day int, contents string) string {
+	pascalCaseDay := formatDay(day, Camel)
+	return strings.ReplaceAll(contents, strings.ToUpper(TOKEN), pascalCaseDay)
+}
+
+func getRelativePaths(solutionsDir string, dayDir string, fileNames fileNames) (paths relativeFilePaths) {
+	paths = relativeFilePaths{
+		main:  filepath.Join(solutionsDir, dayDir, fileNames.main),
+		test:  filepath.Join(solutionsDir, dayDir, fileNames.test),
+		input: filepath.Join(solutionsDir, dayDir, fileNames.input),
+	}
+
+	return paths
+
+}
+
+func getAbsoluteFilePaths(relativePaths relativeFilePaths) (paths absoluteFilePaths) {
+	paths = absoluteFilePaths{
+		main:  getAbsolutePath(relativePaths.main),
+		test:  getAbsolutePath(relativePaths.test),
+		input: getAbsolutePath(relativePaths.input),
+	}
+
+	return paths
 }
 
 func getAbsolutePath(relative string) string {
