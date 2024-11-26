@@ -97,28 +97,9 @@ func numberToCamelCase(num int) (string, error) {
 		return "", fmt.Errorf("invalid input: %d", num)
 	}
 
-	// Define the base number words
-	units := []string{"", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
-	teens := []string{"ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"}
-	tens := []string{"", "", "twenty"}
+	values := []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "twenty_one", "twenty_two", "twenty_three", "twenty_four", "twenty_five"}
 
-	var words []string
-
-	if num >= 10 && num < 20 {
-		// Handle teens
-		words = append(words, teens[num-10])
-	} else {
-		// Handle tens and units
-		if num >= 20 {
-			words = append(words, tens[num/10])
-		}
-		if num%10 > 0 {
-			words = append(words, units[num%10])
-		}
-	}
-
-	// Join words with underscores
-	return strings.Join(words, "_"), nil
+	return values[num-1], nil
 }
 
 func numberToPascalCase(num int) (string, error) {
@@ -126,28 +107,9 @@ func numberToPascalCase(num int) (string, error) {
 		return "", fmt.Errorf("invalid input: %d", num)
 	}
 
-	// Define the base number words
-	units := []string{"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"}
-	teens := []string{"Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"}
-	tens := []string{"", "", "Twenty"}
+	values := []string{"One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty", "TwentyOne", "TwentyTwo", "TwentyThree", "TwentyFour", "TwentyFive"}
 
-	var words []string
-
-	if num >= 10 && num < 20 {
-		// Handle teens
-		words = append(words, teens[num-10])
-	} else {
-		// Handle tens and units
-		if num >= 20 {
-			words = append(words, tens[num/10])
-		}
-		if num%10 > 0 {
-			words = append(words, units[num%10])
-		}
-	}
-
-	// Join words without separators to form PascalCase
-	return strings.Join(words, ""), nil
+	return values[num-1], nil
 }
 
 func formatDay(num int, c Case) string {
