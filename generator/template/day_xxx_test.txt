@@ -1,0 +1,22 @@
+package main
+
+import "testing"
+
+func TestMain(t *testing.T) {
+	var tests = []struct {
+		name     string
+		input    []string
+		expected int
+	}{
+		{input: []string{"a", "b", "c", "d"}, expected: -1},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			actual := DayXXXSolution(test.input)
+			if actual != test.expected {
+				t.Errorf("test %s failed (expected=%d, actual=%d)\n", test.name, test.expected, actual)
+			}
+		})
+	}
+}

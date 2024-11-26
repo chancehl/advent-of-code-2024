@@ -1,0 +1,17 @@
+package main
+
+import (
+	"fmt"
+
+	"github.com/chancehl/advent-of-code-2024/utils"
+)
+
+func main() {
+	input, _ := utils.ReadInputFile("./input.txt")
+
+	fmt.Println(DayXXXSolution(input))
+}
+
+func DayXXXSolution(lines []string) int {
+	return -1
+}
