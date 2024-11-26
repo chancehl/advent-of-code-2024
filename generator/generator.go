@@ -12,6 +12,13 @@ import (
 const TOKEN = "xxx"
 const MODE = 0777
 
+type Case int
+
+const (
+	Pascal Case = iota
+	Camel
+)
+
 func main() {
 	day := flag.Int("d", 0, "the day you are completing")
 
@@ -23,24 +30,29 @@ func main() {
 
 	flag.Parse()
 
-	directoryName := strings.ReplaceAll("day_xxx", strings.ToLower(TOKEN), numberToCamelCase(*day))
-	fileName := strings.ReplaceAll("day_xxx", strings.ToLower(TOKEN), numberToCamelCase(*day))
-	mainFileContents := strings.ReplaceAll(template, strings.ToUpper(TOKEN), numberToPascalCase(*day))
-	testFileContents := strings.ReplaceAll(testTemplate, strings.ToUpper(TOKEN), numberToPascalCase(*day))
+	camelCaseDay := formatDay(*day, Camel)
+	pascalCaseDay := formatDay(*day, Pascal)
+
+	solutionsDirectory := "solutions"
+
+	dayDirectory := strings.ReplaceAll("day_xxx", strings.ToLower(TOKEN), camelCaseDay)
+	fileName := strings.ReplaceAll("day_xxx", strings.ToLower(TOKEN), camelCaseDay)
+	mainFileContents := strings.ReplaceAll(template, strings.ToUpper(TOKEN), pascalCaseDay)
+	testFileContents := strings.ReplaceAll(testTemplate, strings.ToUpper(TOKEN), pascalCaseDay)
 
 	mainFileName := fmt.Sprintf("%s.go", fileName)
 	testFileName := fmt.Sprintf("%s_test.go", fileName)
 	inputFileName := "input.txt"
 
-	relativeMainFilePath := filepath.Join(directoryName, mainFileName)
-	relativeTestFilePath := filepath.Join(directoryName, testFileName)
-	relativeInputFilePath := filepath.Join(directoryName, inputFileName)
+	relativeMainFilePath := filepath.Join(solutionsDirectory, dayDirectory, mainFileName)
+	relativeTestFilePath := filepath.Join(solutionsDirectory, dayDirectory, testFileName)
+	relativeInputFilePath := filepath.Join(solutionsDirectory, dayDirectory, inputFileName)
 
 	absoluteMainFile := getAbsolutePath(relativeMainFilePath)
 	absoluteTestFile := getAbsolutePath(relativeTestFilePath)
 	absoluteInputFile := getAbsolutePath(relativeInputFilePath)
 
-	if err := os.Mkdir(directoryName, MODE); err != nil {
+	if err := os.MkdirAll(filepath.Join(solutionsDirectory, dayDirectory), MODE); err != nil {
 		log.Fatalf("could not create output directory: %v", err)
 	}
 	if err := os.WriteFile(absoluteMainFile, []byte(mainFileContents), MODE); err != nil {
@@ -53,14 +65,15 @@ func main() {
 		log.Fatalf("could not create input file: %v", err)
 	}
 
-	fmt.Printf(`[success] Generated the following files:
+	fmt.Printf(`[success] generated the following files:
 
 - %s/
-	- %s
-	- %s
-	- %s
+	- %s/
+		- %s
+		- %s
+		- %s
 
-Happy hacking 🎅`, directoryName, mainFileName, testFileName, inputFileName)
+Happy hacking 🎅`, solutionsDirectory, dayDirectory, mainFileName, testFileName, inputFileName)
 }
 
 func getAbsolutePath(relative string) string {
@@ -79,9 +92,9 @@ func getTemplateContents(path string) string {
 	return string(template)
 }
 
-func numberToCamelCase(num int) string {
+func numberToCamelCase(num int) (string, error) {
 	if num < 1 || num > 25 {
-		return "invalid_number"
+		return "", fmt.Errorf("invalid input: %d", num)
 	}
 
 	// Define the base number words
@@ -105,12 +118,12 @@ func numberToCamelCase(num int) string {
 	}
 
 	// Join words with underscores
-	return strings.Join(words, "_")
+	return strings.Join(words, "_"), nil
 }
 
-func numberToPascalCase(num int) string {
+func numberToPascalCase(num int) (string, error) {
 	if num < 1 || num > 25 {
-		return "InvalidNumber"
+		return "", fmt.Errorf("invalid input: %d", num)
 	}
 
 	// Define the base number words
@@ -134,5 +147,21 @@ func numberToPascalCase(num int) string {
 	}
 
 	// Join words without separators to form PascalCase
-	return strings.Join(words, "")
+	return strings.Join(words, ""), nil
+}
+
+func formatDay(num int, c Case) string {
+	if c == Camel {
+		camelCaseDay, err := numberToCamelCase(num)
+		if err != nil {
+			log.Fatalf("could not format date: %v", err)
+		}
+		return camelCaseDay
+	}
+
+	pascalCaseDay, err := numberToPascalCase(num)
+	if err != nil {
+		log.Fatalf("could not format date: %v", err)
+	}
+	return pascalCaseDay
 }

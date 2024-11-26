@@ -9,42 +9,50 @@ import (
 
 func TestNumberToCamelCase(t *testing.T) {
 	tests := []struct {
-		input    int
-		expected string
+		input         int
+		expectedValue string
+		expectedError bool
 	}{
-		{1, "one"},
-		{10, "ten"},
-		{15, "fifteen"},
-		{25, "twenty_five"},
-		{0, "invalid_number"},
-		{26, "invalid_number"},
+		{1, "one", false},
+		{10, "ten", false},
+		{15, "fifteen", false},
+		{25, "twenty_five", false},
+		{0, "", true},
+		{26, "", true},
 	}
 
 	for _, test := range tests {
-		result := numberToCamelCase(test.input)
-		if result != test.expected {
-			t.Errorf("numberToCamelCase(%d) = %s; want %s", test.input, result, test.expected)
+		result, err := numberToCamelCase(test.input)
+		if result != test.expectedValue {
+			t.Errorf("numberToCamelCase(%d) = %s; want %s", test.input, result, test.expectedValue)
+		}
+		if err == nil && test.expectedError {
+			t.Errorf("numberToCamelCase(%d) expected to error but did not", test.input)
 		}
 	}
 }
 
 func TestNumberToPascalCase(t *testing.T) {
 	tests := []struct {
-		input    int
-		expected string
+		input         int
+		expectedValue string
+		expectedError bool
 	}{
-		{1, "One"},
-		{10, "Ten"},
-		{15, "Fifteen"},
-		{25, "TwentyFive"},
-		{0, "InvalidNumber"},
-		{26, "InvalidNumber"},
+		{1, "One", false},
+		{10, "Ten", false},
+		{15, "Fifteen", false},
+		{25, "TwentyFive", false},
+		{0, "", true},
+		{26, "", true},
 	}
 
 	for _, test := range tests {
-		result := numberToPascalCase(test.input)
-		if result != test.expected {
-			t.Errorf("numberToPascalCase(%d) = %s; want %s", test.input, result, test.expected)
+		result, err := numberToPascalCase(test.input)
+		if result != test.expectedValue {
+			t.Errorf("numberToPascalCase(%d) = %s; want %s", test.input, result, test.expectedValue)
+		}
+		if err == nil && test.expectedError {
+			t.Errorf("numberToPascalCase(%d) expected to error but did not", test.input)
 		}
 	}
 }
