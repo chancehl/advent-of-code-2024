@@ -92,7 +92,7 @@ func tokenizeDay(day int) string {
 }
 
 func tokenizeTemplate(day int, contents string) string {
-	pascalCaseDay := formatDay(day, Camel)
+	pascalCaseDay := formatDay(day, Pascal)
 	return strings.ReplaceAll(contents, strings.ToUpper(TOKEN), pascalCaseDay)
 }
 
