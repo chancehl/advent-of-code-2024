@@ -22,17 +22,17 @@ func main() {
 	fmt.Println(dayXXXSolution(input))
 }
 
-func dayXXXSolution(lines []string) (int, int) {
-	one := PartOne(lines)
-	two := PartTwo(lines)
+func dayXXXSolution(input string) (int, int) {
+	one := PartOne(input)
+	two := PartTwo(input)
 
 	return one, two
 }
 
-func PartOne(lines []string) int {
+func PartOne(input string) int {
 	return -1
 }
 
-func PartTwo(lines []string) int {
+func PartTwo(input string) int {
 	return -1
 }

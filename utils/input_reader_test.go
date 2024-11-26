@@ -2,12 +2,11 @@ package utils
 
 import (
 	"os"
-	"slices"
 	"testing"
 )
 
 func TestReadInput(t *testing.T) {
-	expected := []string{"a", "b", "c", "d"}
+	expected := "a\nb\nc\nd"
 
 	tempDir := os.TempDir()
 	tempFile, err := os.CreateTemp(tempDir, "input*.txt")
@@ -25,9 +24,7 @@ func TestReadInput(t *testing.T) {
 	}
 	tempFile.Close()
 
-	for _, expectedLine := range expected {
-		if !slices.Contains(actual, expectedLine) {
-			t.Fatalf("line \"%s\" was not present in lines", expectedLine)
-		}
+	if actual != expected {
+		t.Fatalf("actual \"%s\" did not match expected \"%s\"", actual, expected)
 	}
 }

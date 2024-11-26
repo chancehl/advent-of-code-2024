@@ -2,13 +2,15 @@ package main
 
 import "testing"
 
+type testCase struct {
+	name     string
+	input    string
+	expected int
+}
+
 func TestPartOne(t *testing.T) {
-	var tests = []struct {
-		name     string
-		input    []string
-		expected int
-	}{
-		{input: []string{"a", "b", "c", "d"}, expected: -1},
+	var tests = []testCase{
+		{input: "abcd", expected: -1},
 	}
 
 	for _, test := range tests {
@@ -22,12 +24,8 @@ func TestPartOne(t *testing.T) {
 }
 
 func TestPartTwo(t *testing.T) {
-	var tests = []struct {
-		name     string
-		input    []string
-		expected int
-	}{
-		{input: []string{"a", "b", "c", "d"}, expected: -1},
+	var tests = []testCase{
+		{input: "abcd", expected: -1},
 	}
 
 	for _, test := range tests {

@@ -61,7 +61,6 @@ func TestGetAbsolutePath(t *testing.T) {
 	relativePath := "testdir/testfile.txt"
 	expected := filepath.Join(os.TempDir(), relativePath)
 
-	// Create a temporary file to simulate the relative path
 	tempDir := os.TempDir()
 	testPath := filepath.Join(tempDir, relativePath)
 	os.MkdirAll(filepath.Dir(testPath), 0755)
