@@ -32,8 +32,8 @@ const (
 func main() {
 	day := flag.Int("d", 0, "the day you are completing")
 
-	absoluteTemplatePath := getAbsolutePath("generator/template/day_xxx.txt")
-	absoluteTestTemplatePath := getAbsolutePath("generator/template/day_xxx_test.txt")
+	absoluteTemplatePath := getAbsolutePath("generator/template/day_xxx.go")
+	absoluteTestTemplatePath := getAbsolutePath("generator/template/day_xxx_test.go")
 
 	template := getTemplateContents(absoluteTemplatePath)
 	testTemplate := getTemplateContents(absoluteTestTemplatePath)
