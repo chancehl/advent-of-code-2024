@@ -14,7 +14,7 @@ func main() {
 		log.Fatalf("failed to construct path to input: %v", err)
 	}
 
-	input, err := utils.ReadFile(path)
+	input, err := utils.ReadInput(path)
 	if err != nil {
 		log.Fatalf("failed to read %s: %v", path, err)
 	}
