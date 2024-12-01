@@ -2,17 +2,15 @@ package utils
 
 import (
 	"fmt"
-	"time"
 )
 
 type SolutionResult struct {
 	Result int
-	Time   time.Duration
+	Time   int64
 }
 
 func PrintAdventResults(one SolutionResult, two SolutionResult) {
-	asciiArt := `
-ADVENT OF CODE 2024
+	asciiArt := `ADVENT OF CODE 2024
 
 🎁 Part One 🎁     
 🎄 Result: %d 🎄     

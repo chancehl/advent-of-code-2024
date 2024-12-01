@@ -26,12 +26,12 @@ func dayXXXSolution(input string) (int, int) {
 	start := time.Now()
 	one := PartOne(input)
 	elapsed := time.Since(start)
-	resultOne := utils.SolutionResult{Result: one, Time: elapsed}
+	resultOne := utils.SolutionResult{Result: one, Time: elapsed.Milliseconds()}
 
 	start = time.Now()
 	two := PartTwo(input)
 	elapsed = time.Since(start)
-	resultTwo := utils.SolutionResult{Result: two, Time: elapsed}
+	resultTwo := utils.SolutionResult{Result: two, Time: elapsed.Milliseconds()}
 
 	utils.PrintAdventResults(resultOne, resultTwo)
 
