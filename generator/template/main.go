@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"path/filepath"
+	"time"
 
 	"github.com/chancehl/advent-of-code-2024/utils"
 )
@@ -19,12 +19,21 @@ func main() {
 		log.Fatalf("failed to read %s: %v", path, err)
 	}
 
-	fmt.Println(dayXXXSolution(input))
+	dayXXXSolution(input)
 }
 
 func dayXXXSolution(input string) (int, int) {
+	start := time.Now()
 	one := PartOne(input)
+	elapsed := time.Since(start)
+	resultOne := utils.SolutionResult{Result: one, Time: elapsed}
+
+	start = time.Now()
 	two := PartTwo(input)
+	elapsed = time.Since(start)
+	resultTwo := utils.SolutionResult{Result: two, Time: elapsed}
+
+	utils.PrintAdventResults(resultOne, resultTwo)
 
 	return one, two
 }
