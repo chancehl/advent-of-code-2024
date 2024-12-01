@@ -1,14 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 
-	"github.com/chancehl/advent-of-code-2024/utils"
+	"github.com/chancehl/advent-of-code-2024/utils/input"
+	"github.com/chancehl/advent-of-code-2024/utils/math"
+	"github.com/chancehl/advent-of-code-2024/utils/timer"
 )
 
 func main() {
@@ -17,7 +19,7 @@ func main() {
 		log.Fatalf("failed to construct path to input: %v", err)
 	}
 
-	input, err := utils.ReadInput(path)
+	input, err := input.Read(path)
 	if err != nil {
 		log.Fatalf("failed to read %s: %v", path, err)
 	}
@@ -26,38 +28,22 @@ func main() {
 }
 
 func dayOneSolution(input string) (int, int) {
-	start := time.Now()
-	one := PartOne(input)
-	elapsed := time.Since(start)
-	resultOne := utils.SolutionResult{Result: one, Time: elapsed.Milliseconds()}
+	partOneResult, partOneRuntime := timer.ExecuteTimedFunc(PartOne, input)
+	partTwoResult, partTwoRuntime := timer.ExecuteTimedFunc(PartTwo, input)
 
-	start = time.Now()
-	two := PartTwo(input)
-	elapsed = time.Since(start)
-	resultTwo := utils.SolutionResult{Result: two, Time: elapsed.Milliseconds()}
+	fmt.Printf("[day one / part one] result=%d, time=%d ms\n", partOneResult, partOneRuntime)
+	fmt.Printf("[day one / part two] result=%d, time=%d ms\n", partTwoResult, partTwoRuntime)
 
-	utils.PrintAdventResults(resultOne, resultTwo)
-
-	return one, two
+	return partOneResult, partTwoResult
 }
 
 func PartOne(input string) int {
 	leftNums, rightNums := parsePairs(input)
 
 	diff := 0
-	index := 0
 
-	for index < len(leftNums) {
-		left := leftNums[index]
-		right := rightNums[index]
-
-		if right > left {
-			diff += (right - left)
-		} else {
-			diff += (left - right)
-		}
-
-		index += 1
+	for index := range leftNums {
+		diff += math.Abs(leftNums[index], rightNums[index])
 	}
 
 	return diff

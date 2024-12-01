@@ -1,11 +1,11 @@
-package utils
+package input
 
 import (
 	"fmt"
 	"os"
 )
 
-func ReadInput(path string) (string, error) {
+func Read(path string) (string, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return "", fmt.Errorf("could not read file: %v", err)

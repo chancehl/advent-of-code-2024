@@ -1,11 +1,11 @@
-package utils
+package input
 
 import (
 	"os"
 	"testing"
 )
 
-func TestReadInput(t *testing.T) {
+func TestRead(t *testing.T) {
 	expected := "a\nb\nc\nd"
 
 	tempDir := os.TempDir()
@@ -18,7 +18,7 @@ func TestReadInput(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 
-	actual, err := ReadInput(tempFile.Name())
+	actual, err := Read(tempFile.Name())
 	if err != nil {
 		t.Fatalf("could not read %s: %+v", tempFile.Name(), err)
 	}
