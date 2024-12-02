@@ -40,8 +40,8 @@ func dayTwoSolution(input string) (int, int) {
 	partOneResult, partOneRuntime := timer.ExecuteTimedFunc(PartOne, input)
 	partTwoResult, partTwoRuntime := timer.ExecuteTimedFunc(PartTwo, input)
 
-	fmt.Printf("[day two / part one] result=%d, time=%d ms\n", partOneResult, partOneRuntime)
-	fmt.Printf("[day two / part two] result=%d, time=%d ms\n", partTwoResult, partTwoRuntime)
+	fmt.Printf("[day two / part one] result=%d, time=%.2fms\n", partOneResult, partOneRuntime)
+	fmt.Printf("[day two / part two] result=%d, time=%.2fms\n", partTwoResult, partTwoRuntime)
 
 	return partOneResult, partTwoResult
 }

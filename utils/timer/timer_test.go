@@ -12,7 +12,7 @@ func TestExecuteTimedFunc(t *testing.T) {
 		mockFunc        ExecutableFunc
 		input           string
 		expectedResult  int
-		expectedMinTime int64
+		expectedMinTime float64
 	}{
 		{
 			name: "Instantaneous execution",
@@ -46,7 +46,7 @@ func TestExecuteTimedFunc(t *testing.T) {
 
 			// Check that the elapsed time is at least the expected minimum time
 			if elapsed < tt.expectedMinTime {
-				t.Errorf("Expected elapsed time >= %dms, got: %dms", tt.expectedMinTime, elapsed)
+				t.Errorf("Expected elapsed time >= %fms, got: %fms", tt.expectedMinTime, elapsed)
 			}
 		})
 	}
