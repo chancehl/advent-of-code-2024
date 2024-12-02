@@ -56,27 +56,27 @@ func TestIsSafe(t *testing.T) {
 	}{
 		{
 			name:     "All increasing by stable amount",
-			report:   []int{1, 2, 3, 4, 5},
+			report:   ElfReport{levels: []int{1, 2, 3, 4, 5}},
 			expected: true,
 		},
 		{
 			name:     "All decreasing by stable amount",
-			report:   []int{5, 4, 3, 2, 1},
+			report:   ElfReport{levels: []int{5, 4, 3, 2, 1}},
 			expected: true,
 		},
 		{
 			name:     "All increasing, but unstable jumps",
-			report:   []int{1, 5, 6, 8, 12},
+			report:   ElfReport{levels: []int{1, 5, 6, 8, 12}},
 			expected: false,
 		},
 		{
 			name:     "All decreasing, but unstable jumps",
-			report:   []int{15, 12, 9, 4, 0},
+			report:   ElfReport{levels: []int{15, 12, 9, 4, 0}},
 			expected: false,
 		},
 		{
 			name:     "Mix of increasing and decreasing values",
-			report:   []int{1, 5, 2, 7, 3, 0},
+			report:   ElfReport{levels: []int{1, 5, 2, 7, 3, 0}},
 			expected: false,
 		},
 	}
@@ -99,22 +99,22 @@ func TestIsSafeWithDampener(t *testing.T) {
 	}{
 		{
 			name:     "Safe regardless of what level is removed",
-			report:   []int{7, 6, 4, 2, 1},
+			report:   ElfReport{levels: []int{7, 6, 4, 2, 1}},
 			expected: true,
 		},
 		{
 			name:     "Unsafe regardless of what level is removed",
-			report:   []int{1, 2, 7, 8, 9},
+			report:   ElfReport{levels: []int{1, 2, 7, 8, 9}},
 			expected: false,
 		},
 		{
 			name:     "Safe by removing a single level",
-			report:   []int{1, 3, 2, 4, 5},
+			report:   ElfReport{levels: []int{1, 3, 2, 4, 5}},
 			expected: true,
 		},
 		{
 			name:     "Safe by removing any level",
-			report:   []int{1, 3, 6, 7, 9},
+			report:   ElfReport{levels: []int{1, 3, 6, 7, 9}},
 			expected: true,
 		},
 	}

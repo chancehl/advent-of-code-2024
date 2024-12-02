@@ -13,7 +13,9 @@ import (
 	"github.com/chancehl/advent-of-code-2024/utils/timer"
 )
 
-type ElfReport []int
+type ElfReport struct {
+	levels []int
+}
 
 type ElfReportData []ElfReport
 
@@ -77,29 +79,33 @@ func NewElfReportData(input string) ElfReportData {
 			row = append(row, value)
 		}
 
-		data = append(data, row)
+		data = append(data, ElfReport{levels: row})
 	}
 
 	return data
 }
 
-func (report ElfReport) IsSafe() bool {
-	first := report[0]
-	last := report[len(report)-1]
+func (r ElfReport) IsSafe() bool {
+	levels := r.levels
 
-	for i := 1; i < len(report); i += 1 {
-		left := report[i-1]
-		right := report[i]
+	first := levels[0]
+	last := levels[len(levels)-1]
 
-		if math.Abs(right, left) > 3 { // diff check
+	for i := 1; i < len(levels); i += 1 {
+		left := levels[i-1]
+		right := levels[i]
+
+		// diff check
+		if math.Abs(right, left) > 3 {
 			return false
-		} else if first < last {
-			// we are ascending
+		}
+
+		// order check
+		if first < last {
 			if !(left < right) {
 				return false
 			}
 		} else {
-			// we are descending
 			if !(left > right) {
 				return false
 			}
@@ -109,21 +115,14 @@ func (report ElfReport) IsSafe() bool {
 	return true
 }
 
-func (report ElfReport) IsSafeWithDampener() bool {
-	var currentReport ElfReport
+func (r ElfReport) IsSafeWithDampener() bool {
+	for index := range r.levels {
+		left := r.levels[0:index]
+		right := r.levels[index+1:]
 
-	for index := range report {
-		if index == 0 {
-			currentReport = report[index+1:]
-		} else if index == len(report)-1 {
-			currentReport = report[0 : len(report)-1]
-		} else {
-			left := report[0:index]
-			right := report[index+1:]
-			currentReport = slices.Concat(left, right)
-		}
+		subreport := ElfReport{levels: slices.Concat(left, right)}
 
-		if currentReport.IsSafe() {
+		if subreport.IsSafe() {
 			return true
 		}
 	}
