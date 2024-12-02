@@ -34,6 +34,18 @@ Advent of Code is an Advent calendar of small programming puzzles for a variety 
 | 24  | TODO     |
 | 🎅  | TODO     |
 
+## Execution output
+
+```
+🎅 running solutions/day_one/day_one.go...
+[day one / part one] result=1110981, time=0.32ms
+[day one / part two] result=24869388, time=0.50ms
+
+🎄 running solutions/day_two/day_two.go...
+[day two / part one] result=442, time=0.43ms
+[day two / part two] result=493, time=0.59ms
+```
+
 ## Test output
 
 ```
