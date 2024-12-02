@@ -1,4 +1,10 @@
-# Progress
+# Advent of Code 2024
+
+## Overview
+
+Advent of Code is an Advent calendar of small programming puzzles for a variety of skill sets and skill levels that can be solved in any programming language you like. People use them as interview prep, company training, university coursework, practice problems, a speed contest, or to challenge each other. [from https://adventofcode.com/2024/about]
+
+## Progress
 
 | Day | Complete |
 | --- | -------- |
@@ -27,3 +33,15 @@
 | 23  | TODO     |
 | 24  | TODO     |
 | 🎅  | TODO     |
+
+## Test output
+
+```
+ok      github.com/chancehl/advent-of-code-2024/generator       (cached)
+ok      github.com/chancehl/advent-of-code-2024/generator/template      (cached)
+ok      github.com/chancehl/advent-of-code-2024/solutions/day_one       (cached)
+ok      github.com/chancehl/advent-of-code-2024/solutions/day_two       (cached)
+ok      github.com/chancehl/advent-of-code-2024/utils/input     (cached)
+ok      github.com/chancehl/advent-of-code-2024/utils/math      (cached)
+ok      github.com/chancehl/advent-of-code-2024/utils/timer     (cached)
+```
