@@ -1,3 +1,4 @@
+// ChatGPT wrote these 🤖
 package timer
 
 import (
