@@ -38,10 +38,8 @@ func dayThreeSolution(input string) (int, int) {
 
 func PartOne(input string) int {
 	sum := 0
-	r, _ := regexp.Compile(`mul\(\d+,\d+\)`)
-	matches := r.FindAll([]byte(input), -1)
-	for _, match := range matches {
-		left, right := parseInstruction(string(match))
+	for _, instruction := range findInstructions(input) {
+		left, right := parseOperands(instruction)
 		sum += (left * right)
 	}
 	return sum
@@ -53,7 +51,7 @@ func PartTwo(input string) int {
 	return sum
 }
 
-func parseInstruction(instruction string) (int, int) {
+func parseOperands(instruction string) (int, int) {
 	stripped := strings.ReplaceAll(instruction, "mul", "")
 	stripped = strings.ReplaceAll(stripped, "(", "")
 	stripped = strings.ReplaceAll(stripped, ")", "")
@@ -76,27 +74,20 @@ func findInstructions(code string) []string {
 	return instructions
 }
 
-func findDontCmd(code string) int {
+func FindStopExecutionSignal(code string) int {
 	r, _ := regexp.Compile(`don't\(\)`)
-	index := r.FindIndex([]byte(code))
-	if index == nil {
+	posn := r.FindStringIndex(code)
+	if posn == nil {
 		return -1
 	}
-	return index[1]
+	return posn[1]
 }
 
-func findDoCmd(code string) int {
+func FindStartExecutionSignal(code string) int {
 	r, _ := regexp.Compile(`do\(\)`)
-	index := r.FindIndex([]byte(code))
-	if index == nil {
+	posn := r.FindStringIndex(code)
+	if posn == nil {
 		return -1
 	}
-	return index[1]
-}
-
-func computeValidInstructionRange(code string) (int, int) {
-	start := findDontCmd(code)
-	end := findDoCmd(code)
-
-	return start, end
+	return posn[1]
 }

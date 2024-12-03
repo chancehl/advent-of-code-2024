@@ -36,3 +36,20 @@ func TestPartTwo(t *testing.T) {
 		})
 	}
 }
+
+func TestFindStopExecutionSignal(t *testing.T) {
+	var tests = []testCase{
+		{input: "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))", expected: 27},
+		{input: "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)don't()", expected: 27},
+		{input: "xmul(2,4)&mul[3,7]!", expected: -1},
+	}
+
+	for _, test := range tests {
+		t.Run("FindStopExecutionSignal", func(t *testing.T) {
+			actual := FindStopExecutionSignal(test.input)
+			if actual != test.expected {
+				t.Errorf("test failed (expected=%d, actual=%d)\n", test.expected, actual)
+			}
+		})
+	}
+}
