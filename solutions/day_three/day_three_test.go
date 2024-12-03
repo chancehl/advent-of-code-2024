@@ -3,7 +3,6 @@ package main
 import "testing"
 
 type testCase struct {
-	name     string
 	input    string
 	expected int
 }
@@ -14,10 +13,10 @@ func TestPartOne(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
+		t.Run("part one", func(t *testing.T) {
 			actual := PartOne(test.input)
 			if actual != test.expected {
-				t.Errorf("test %s failed (expected=%d, actual=%d)\n", test.name, test.expected, actual)
+				t.Errorf("test failed (expected=%d, actual=%d)\n", test.expected, actual)
 			}
 		})
 	}
@@ -29,10 +28,10 @@ func TestPartTwo(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
+		t.Run("part two", func(t *testing.T) {
 			actual := PartTwo(test.input)
 			if actual != test.expected {
-				t.Errorf("test %s failed (expected=%d, actual=%d)\n", test.name, test.expected, actual)
+				t.Errorf("test failed (expected=%d, actual=%d)\n", test.expected, actual)
 			}
 		})
 	}
