@@ -72,7 +72,7 @@ func TestFindOperations(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run("FindOperations", func(t *testing.T) {
+		t.Run("findOperations", func(t *testing.T) {
 			actual := findOperations(test.input, test.ignoreSignals)
 			for _, expectedOperation := range test.expected {
 				if !slices.Contains(actual, expectedOperation) {
@@ -81,4 +81,27 @@ func TestFindOperations(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestFindLatestSignal(t *testing.T) {
+	var tests = []struct {
+		input    string
+		expected Signal
+	}{
+		{input: "", expected: Do},
+		{input: "xmul(2,4)&mul[3,7]!^don't()", expected: Dont},
+		{input: "xmul(2,4)&mul[3,7]!^don't()do()", expected: Do},
+		{input: "xmul(2,4)&mul[3,7]!^", expected: Do},
+		{input: "don't()", expected: Dont},
+	}
+
+	for _, test := range tests {
+		t.Run("findLatestSignal", func(t *testing.T) {
+			actual := findLatestSignal(test.input)
+			if actual != test.expected {
+				t.Errorf("test failed (expected=%v, actual=%v)\n", test.expected, actual)
+			}
+		})
+	}
+
 }
