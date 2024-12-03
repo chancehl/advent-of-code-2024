@@ -10,42 +10,42 @@ func TestAbs(t *testing.T) {
 		expected int
 	}{
 		{
-			name:     "Positive difference",
+			name:     "positive difference",
 			a:        10,
 			b:        5,
 			expected: 5,
 		},
 		{
-			name:     "Negative difference",
+			name:     "negative difference",
 			a:        5,
 			b:        10,
 			expected: 5,
 		},
 		{
-			name:     "Zero difference",
+			name:     "zero difference",
 			a:        7,
 			b:        7,
 			expected: 0,
 		},
 		{
-			name:     "Large positive difference",
+			name:     "large positive difference",
 			a:        1000,
 			b:        100,
 			expected: 900,
 		},
 		{
-			name:     "Large negative difference",
+			name:     "large negative difference",
 			a:        100,
 			b:        1000,
 			expected: 900,
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := Abs(tt.a, tt.b)
-			if result != tt.expected {
-				t.Errorf("Abs(%d, %d) = %d; want %d", tt.a, tt.b, result, tt.expected)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			result := Abs(test.a, test.b)
+			if result != test.expected {
+				t.Errorf("Abs(%d, %d) = %d; want %d", test.a, test.b, result, test.expected)
 			}
 		})
 	}
