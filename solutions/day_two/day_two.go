@@ -13,16 +13,7 @@ import (
 	"github.com/chancehl/advent-of-code-2024/utils/timer"
 )
 
-type ElfReport struct {
-	levels []int
-}
-
-type ElfReportData []ElfReport
-
-type ElfReportSaftetyChecker interface {
-	IsSafe() bool
-	IsSafeWithDampener() bool
-}
+type Report []int
 
 func main() {
 	path, err := filepath.Abs("solutions/day_two/input.txt")
@@ -49,51 +40,49 @@ func dayTwoSolution(input string) (int, int) {
 }
 
 func PartOne(input string) int {
-	valid := 0
-	for _, report := range NewElfReportData(input) {
+	safe := 0
+	for _, report := range ParseReports(input) {
 		if report.IsSafe() {
-			valid += 1
+			safe += 1
 		}
 	}
-	return valid
+	return safe
 }
 
 func PartTwo(input string) int {
-	valid := 0
-	for _, report := range NewElfReportData(input) {
+	safe := 0
+	for _, report := range ParseReports(input) {
 		if report.IsSafeWithDampener() {
-			valid += 1
+			safe += 1
 		}
 	}
-	return valid
+	return safe
 }
 
-func NewElfReportData(input string) ElfReportData {
-	data := ElfReportData{}
+func ParseReports(input string) []Report {
+	reports := []Report{}
 
 	for _, report := range strings.Split(input, "\n") {
-		row := []int{}
+		row := Report{}
 
 		for _, level := range strings.Split(report, " ") {
 			value, _ := strconv.Atoi(level)
 			row = append(row, value)
 		}
 
-		data = append(data, ElfReport{levels: row})
+		reports = append(reports, row)
 	}
 
-	return data
+	return reports
 }
 
-func (r ElfReport) IsSafe() bool {
-	levels := r.levels
+func (report Report) IsSafe() bool {
+	first := report[0]
+	last := report[len(report)-1]
 
-	first := levels[0]
-	last := levels[len(levels)-1]
-
-	for i := 1; i < len(levels); i += 1 {
-		left := levels[i-1]
-		right := levels[i]
+	for i := 1; i < len(report); i += 1 {
+		left := report[i-1]
+		right := report[i]
 
 		// diff check
 		if math.Abs(right, left) > 3 {
@@ -115,12 +104,12 @@ func (r ElfReport) IsSafe() bool {
 	return true
 }
 
-func (r ElfReport) IsSafeWithDampener() bool {
-	for index := range r.levels {
-		left := r.levels[0:index]
-		right := r.levels[index+1:]
+func (report Report) IsSafeWithDampener() bool {
+	for index := range report {
+		left := report[0:index]
+		right := report[index+1:]
 
-		subreport := ElfReport{levels: slices.Concat(left, right)}
+		subreport := slices.Concat(left, right)
 
 		if subreport.IsSafe() {
 			return true
