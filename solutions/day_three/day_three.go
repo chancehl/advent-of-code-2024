@@ -12,6 +12,20 @@ import (
 	"github.com/chancehl/advent-of-code-2024/utils/timer"
 )
 
+type Signal int
+
+const (
+	Do Signal = iota
+	Dont
+)
+
+type Operation struct {
+	instruction string
+	start       int
+	end         int
+	signal      Signal
+}
+
 func main() {
 	path, err := filepath.Abs("solutions/day_three/input.txt")
 	if err != nil {
@@ -38,21 +52,33 @@ func dayThreeSolution(input string) (int, int) {
 
 func PartOne(input string) int {
 	sum := 0
-	for _, instruction := range findInstructions(input) {
-		left, right := parseOperands(instruction)
-		sum += (left * right)
+	operations := findOperations(input, true)
+	for _, operation := range operations {
+		if operation.signal == Do {
+			sum += operation.execute()
+		}
 	}
 	return sum
 }
 
 func PartTwo(input string) int {
 	sum := 0
-
+	operations := findOperations(input, false)
+	for _, operation := range operations {
+		if operation.signal == Do {
+			sum += operation.execute()
+		}
+	}
 	return sum
 }
 
-func parseOperands(instruction string) (int, int) {
-	stripped := strings.ReplaceAll(instruction, "mul", "")
+func (o Operation) execute() int {
+	left, right := o.parseOperands()
+	return left * right
+}
+
+func (o Operation) parseOperands() (int, int) {
+	stripped := strings.ReplaceAll(o.instruction, "mul", "")
 	stripped = strings.ReplaceAll(stripped, "(", "")
 	stripped = strings.ReplaceAll(stripped, ")", "")
 
@@ -64,30 +90,58 @@ func parseOperands(instruction string) (int, int) {
 	return left, right
 }
 
-func findInstructions(code string) []string {
-	instructions := []string{}
+func findOperations(code string, ignoreSignals bool) []Operation {
+	operations := []Operation{}
+
 	r, _ := regexp.Compile(`mul\(\d+,\d+\)`)
-	matches := r.FindAll([]byte(code), -1)
+	matches := r.FindAllStringIndex(code, -1)
+
 	for _, match := range matches {
-		instructions = append(instructions, string(match))
+		start := match[0]
+		end := match[1]
+
+		var signal Signal
+
+		if ignoreSignals {
+			signal = Do
+		} else {
+			signal = findLatestSignal(code[0:start])
+		}
+
+		operation := Operation{
+			start:       start,
+			end:         end,
+			signal:      signal,
+			instruction: code[start:end],
+		}
+
+		operations = append(operations, operation)
 	}
-	return instructions
+
+	return operations
 }
 
-func FindStopExecutionSignal(code string) int {
-	r, _ := regexp.Compile(`don't\(\)`)
-	posn := r.FindStringIndex(code)
-	if posn == nil {
-		return -1
-	}
-	return posn[1]
-}
+func findLatestSignal(code string) Signal {
+	doRegex, _ := regexp.Compile(`do\(\)`)
+	dontRegex, _ := regexp.Compile(`don't\(\)`)
 
-func FindStartExecutionSignal(code string) int {
-	r, _ := regexp.Compile(`do\(\)`)
-	posn := r.FindStringIndex(code)
-	if posn == nil {
-		return -1
+	doMatches := doRegex.FindAllStringIndex(code, -1)
+	dontMatches := dontRegex.FindAllStringIndex(code, -1)
+
+	if len(doMatches) > 0 && len(dontMatches) > 0 {
+		lastDoRange := doMatches[len(doMatches)-1]
+		lastDontRange := dontMatches[len(dontMatches)-1]
+
+		if lastDoRange[1] > lastDontRange[1] {
+			return Do
+		} else {
+			return Dont
+		}
 	}
-	return posn[1]
+
+	if len(dontMatches) > 0 {
+		return Dont
+	}
+
+	return Do
 }

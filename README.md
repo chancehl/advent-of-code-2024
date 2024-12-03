@@ -10,7 +10,7 @@ Advent of Code is an Advent calendar of small programming puzzles for a variety 
 | --- | -------- |
 | 1   | ✅       |
 | 2   | ✅       |
-| 3   | TODO     |
+| 3   | ✅       |
 | 4   | TODO     |
 | 5   | TODO     |
 | 6   | TODO     |
@@ -37,23 +37,31 @@ Advent of Code is an Advent calendar of small programming puzzles for a variety 
 ## Execution output
 
 ```
-🎅 running solutions/day_one/day_one.go...
-[day one / part one] result=1110981, time=0.32ms
-[day one / part two] result=24869388, time=0.50ms
+🎄 running solutions/day_one/day_one.go...
+[day one / part one] result=1110981, time=0.14ms
+[day one / part two] result=24869388, time=0.18ms
 
-🎄 running solutions/day_two/day_two.go...
-[day two / part one] result=442, time=0.43ms
-[day two / part two] result=493, time=0.59ms
+🎅 running solutions/day_three/day_three.go...
+[day three / part one] result=183669043, time=0.35ms
+[day three / part two] result=59097164, time=7.91ms
+
+🎅 running solutions/day_two/day_two.go...
+[day two / part one] result=442, time=0.23ms
+[day two / part two] result=493, time=0.47ms
 ```
 
 ## Test output
 
 ```
+~/w/advent-of-code-2024 on main !3 ❯ go test ./...                                         at 02:28:49 PM
+?       github.com/chancehl/advent-of-code-2024 [no test files]
 ok      github.com/chancehl/advent-of-code-2024/generator       (cached)
 ok      github.com/chancehl/advent-of-code-2024/generator/template      (cached)
 ok      github.com/chancehl/advent-of-code-2024/solutions/day_one       (cached)
+ok      github.com/chancehl/advent-of-code-2024/solutions/day_three     (cached)
 ok      github.com/chancehl/advent-of-code-2024/solutions/day_two       (cached)
 ok      github.com/chancehl/advent-of-code-2024/utils/input     (cached)
 ok      github.com/chancehl/advent-of-code-2024/utils/math      (cached)
+ok      github.com/chancehl/advent-of-code-2024/utils/random    (cached)
 ok      github.com/chancehl/advent-of-code-2024/utils/timer     (cached)
 ```
