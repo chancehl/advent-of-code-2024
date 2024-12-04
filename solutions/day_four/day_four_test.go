@@ -1,10 +1,7 @@
 package main
 
 import (
-	"path/filepath"
 	"testing"
-
-	"github.com/chancehl/advent-of-code-2024/utils/input"
 )
 
 type testCase struct {
@@ -19,9 +16,7 @@ type searchDirectionTestCase struct {
 	expected bool
 }
 
-func TestPartOne(t *testing.T) {
-	var tests = []testCase{
-		{input: `MMMSXXMASM
+const puzzleInput = `MMMSXXMASM
 MSAMXMSMSA
 AMXSXMAAMM
 MSAMASMSMX
@@ -30,7 +25,11 @@ XXAMMXXAMA
 SMSMSASXSS
 SAXAMASAAA
 MAMMMXMMMM
-MXMXAXMASX`, expected: 18},
+MXMXAXMASX`
+
+func TestPartOne(t *testing.T) {
+	var tests = []testCase{
+		{input: puzzleInput, expected: 18},
 	}
 
 	for _, test := range tests {
@@ -59,8 +58,7 @@ func TestPartTwo(t *testing.T) {
 }
 
 func TestSearchUp(t *testing.T) {
-	input := readTestInputText(t)
-	matrix := createMatrixFromInput(input)
+	matrix := createMatrixFromInput(puzzleInput)
 
 	var tests = []searchDirectionTestCase{{
 		name:     "out of bounds",
@@ -90,8 +88,7 @@ func TestSearchUp(t *testing.T) {
 }
 
 func TestSearchDown(t *testing.T) {
-	input := readTestInputText(t)
-	matrix := createMatrixFromInput(input)
+	matrix := createMatrixFromInput(puzzleInput)
 
 	var tests = []searchDirectionTestCase{{
 		name:     "out of bounds",
@@ -121,8 +118,7 @@ func TestSearchDown(t *testing.T) {
 }
 
 func TestSearchRight(t *testing.T) {
-	input := readTestInputText(t)
-	matrix := createMatrixFromInput(input)
+	matrix := createMatrixFromInput(puzzleInput)
 
 	var tests = []searchDirectionTestCase{{
 		name:     "out of bounds",
@@ -152,8 +148,7 @@ func TestSearchRight(t *testing.T) {
 }
 
 func TestSearchLeft(t *testing.T) {
-	input := readTestInputText(t)
-	matrix := createMatrixFromInput(input)
+	matrix := createMatrixFromInput(puzzleInput)
 
 	var tests = []searchDirectionTestCase{{
 		name:     "out of bounds",
@@ -183,8 +178,7 @@ func TestSearchLeft(t *testing.T) {
 }
 
 func TestSearchDiagonalUpLeft(t *testing.T) {
-	input := readTestInputText(t)
-	matrix := createMatrixFromInput(input)
+	matrix := createMatrixFromInput(puzzleInput)
 
 	var tests = []searchDirectionTestCase{{
 		name:     "out of bounds",
@@ -214,8 +208,7 @@ func TestSearchDiagonalUpLeft(t *testing.T) {
 }
 
 func TestSearchDiagonalUpRight(t *testing.T) {
-	input := readTestInputText(t)
-	matrix := createMatrixFromInput(input)
+	matrix := createMatrixFromInput(puzzleInput)
 
 	var tests = []searchDirectionTestCase{{
 		name:     "out of bounds",
@@ -245,8 +238,7 @@ func TestSearchDiagonalUpRight(t *testing.T) {
 }
 
 func TestSearchDiagonalDownLeft(t *testing.T) {
-	input := readTestInputText(t)
-	matrix := createMatrixFromInput(input)
+	matrix := createMatrixFromInput(puzzleInput)
 
 	var tests = []searchDirectionTestCase{{
 		name:     "out of bounds",
@@ -276,8 +268,7 @@ func TestSearchDiagonalDownLeft(t *testing.T) {
 }
 
 func TestSearchDiagonalDownRight(t *testing.T) {
-	input := readTestInputText(t)
-	matrix := createMatrixFromInput(input)
+	matrix := createMatrixFromInput(puzzleInput)
 
 	var tests = []searchDirectionTestCase{{
 		name:     "out of bounds",
@@ -304,18 +295,4 @@ func TestSearchDiagonalDownRight(t *testing.T) {
 			}
 		})
 	}
-}
-
-func readTestInputText(t *testing.T) string {
-	path, err := filepath.Abs("input_test.txt")
-	if err != nil {
-		t.Errorf("failed to construct path to input: %v", err)
-	}
-
-	input, err := input.Read(path)
-	if err != nil {
-		t.Errorf("failed to read test input data %s: %v", path, err)
-	}
-
-	return input
 }
