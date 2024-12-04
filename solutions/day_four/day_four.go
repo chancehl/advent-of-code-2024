@@ -58,7 +58,7 @@ func PartOne(input string) int {
 	for i := range matrix {
 		for j := range matrix[i] {
 			if matrix[i][j] == "X" {
-				appearances += search(matrix, i, j)
+				appearances += searchForXmas(matrix, i, j)
 			}
 		}
 	}
@@ -67,7 +67,19 @@ func PartOne(input string) int {
 }
 
 func PartTwo(input string) int {
-	return -1
+	appearances := 0
+
+	matrix := createMatrixFromInput(input)
+
+	for i := range matrix {
+		for j := range matrix[i] {
+			if matrix[i][j] == "A" && isXmasCross(matrix, i, j) {
+				appearances += 1
+			}
+		}
+	}
+
+	return appearances
 }
 
 func createMatrixFromInput(input string) [][]string {
@@ -87,7 +99,7 @@ func createMatrixFromInput(input string) [][]string {
 	return matrix
 }
 
-func search(matrix [][]string, row, col int) int {
+func searchForXmas(matrix [][]string, row, col int) int {
 	matches := 0
 
 	// up
@@ -244,4 +256,45 @@ func searchDownRight(matrix [][]string, row, col int) bool {
 	}
 
 	return strings.Join(letters, "") == Xmas
+}
+
+func isXmasCross(matrix [][]string, row, col int) bool {
+	if row < 1 {
+		// too far up
+		return false
+	} else if row+1 > len(matrix)-1 {
+		// too far down
+		return false
+	} else if col < 1 {
+		// too far left
+		return false
+	} else if col+1 > len(matrix[0])-1 {
+		// too far right
+		return false
+	} else {
+		left, right := getCrossValues(matrix, row, col)
+
+		validLeft := left == "MAS" || left == "SAM"
+		validRight := right == "MAS" || right == "SAM"
+
+		return validLeft && validRight
+	}
+}
+
+func getCrossValues(matrix [][]string, row, col int) (string, string) {
+	leftDiagonal := []string{
+		matrix[row-1][col-1],
+		matrix[row][col],
+		matrix[row+1][col+1],
+	}
+	rightDiagonal := []string{
+		matrix[row+1][col-1],
+		matrix[row][col],
+		matrix[row-1][col+1],
+	}
+
+	left := strings.Join(leftDiagonal, "")
+	right := strings.Join(rightDiagonal, "")
+
+	return left, right
 }

@@ -4,12 +4,12 @@ import (
 	"testing"
 )
 
-type testCase struct {
+type solutionTestCase struct {
 	input    string
 	expected int
 }
 
-type searchDirectionTestCase struct {
+type searchTestCase struct {
 	name     string
 	row      int
 	col      int
@@ -28,7 +28,7 @@ MAMMMXMMMM
 MXMXAXMASX`
 
 func TestPartOne(t *testing.T) {
-	var tests = []testCase{
+	var tests = []solutionTestCase{
 		{input: puzzleInput, expected: 18},
 	}
 
@@ -43,8 +43,8 @@ func TestPartOne(t *testing.T) {
 }
 
 func TestPartTwo(t *testing.T) {
-	var tests = []testCase{
-		{input: "abcd", expected: -1},
+	var tests = []solutionTestCase{
+		{input: puzzleInput, expected: 9},
 	}
 
 	for _, test := range tests {
@@ -60,7 +60,7 @@ func TestPartTwo(t *testing.T) {
 func TestSearchUp(t *testing.T) {
 	matrix := createMatrixFromInput(puzzleInput)
 
-	var tests = []searchDirectionTestCase{{
+	var tests = []searchTestCase{{
 		name:     "out of bounds",
 		row:      0,
 		col:      0,
@@ -90,7 +90,7 @@ func TestSearchUp(t *testing.T) {
 func TestSearchDown(t *testing.T) {
 	matrix := createMatrixFromInput(puzzleInput)
 
-	var tests = []searchDirectionTestCase{{
+	var tests = []searchTestCase{{
 		name:     "out of bounds",
 		row:      9,
 		col:      0,
@@ -120,7 +120,7 @@ func TestSearchDown(t *testing.T) {
 func TestSearchRight(t *testing.T) {
 	matrix := createMatrixFromInput(puzzleInput)
 
-	var tests = []searchDirectionTestCase{{
+	var tests = []searchTestCase{{
 		name:     "out of bounds",
 		row:      0,
 		col:      9,
@@ -150,7 +150,7 @@ func TestSearchRight(t *testing.T) {
 func TestSearchLeft(t *testing.T) {
 	matrix := createMatrixFromInput(puzzleInput)
 
-	var tests = []searchDirectionTestCase{{
+	var tests = []searchTestCase{{
 		name:     "out of bounds",
 		row:      0,
 		col:      0,
@@ -180,7 +180,7 @@ func TestSearchLeft(t *testing.T) {
 func TestSearchDiagonalUpLeft(t *testing.T) {
 	matrix := createMatrixFromInput(puzzleInput)
 
-	var tests = []searchDirectionTestCase{{
+	var tests = []searchTestCase{{
 		name:     "out of bounds",
 		row:      0,
 		col:      0,
@@ -210,7 +210,7 @@ func TestSearchDiagonalUpLeft(t *testing.T) {
 func TestSearchDiagonalUpRight(t *testing.T) {
 	matrix := createMatrixFromInput(puzzleInput)
 
-	var tests = []searchDirectionTestCase{{
+	var tests = []searchTestCase{{
 		name:     "out of bounds",
 		row:      0,
 		col:      9,
@@ -240,7 +240,7 @@ func TestSearchDiagonalUpRight(t *testing.T) {
 func TestSearchDiagonalDownLeft(t *testing.T) {
 	matrix := createMatrixFromInput(puzzleInput)
 
-	var tests = []searchDirectionTestCase{{
+	var tests = []searchTestCase{{
 		name:     "out of bounds",
 		row:      9,
 		col:      9,
@@ -270,7 +270,7 @@ func TestSearchDiagonalDownLeft(t *testing.T) {
 func TestSearchDiagonalDownRight(t *testing.T) {
 	matrix := createMatrixFromInput(puzzleInput)
 
-	var tests = []searchDirectionTestCase{{
+	var tests = []searchTestCase{{
 		name:     "out of bounds",
 		row:      9,
 		col:      9,
@@ -290,6 +290,36 @@ func TestSearchDiagonalDownRight(t *testing.T) {
 	for _, test := range tests {
 		t.Run("search down right", func(t *testing.T) {
 			actual := searchDownRight(matrix, test.row, test.col)
+			if actual != test.expected {
+				t.Errorf("test \"%s\" failed (expected=%v, actual=%v)\n", test.name, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestIsXmasCross(t *testing.T) {
+	matrix := createMatrixFromInput(puzzleInput)
+
+	var tests = []searchTestCase{{
+		name:     "out of bounds",
+		row:      0,
+		col:      0,
+		expected: false,
+	}, {
+		name:     "in bounds and not found",
+		row:      5,
+		col:      5,
+		expected: false,
+	}, {
+		name:     "in bounds and found",
+		row:      1,
+		col:      2,
+		expected: true,
+	}}
+
+	for _, test := range tests {
+		t.Run("search xmas cross", func(t *testing.T) {
+			actual := isXmasCross(matrix, test.row, test.col)
 			if actual != test.expected {
 				t.Errorf("test \"%s\" failed (expected=%v, actual=%v)\n", test.name, test.expected, actual)
 			}
