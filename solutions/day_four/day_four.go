@@ -11,19 +11,6 @@ import (
 	"github.com/chancehl/advent-of-code-2024/utils/timer"
 )
 
-type Direction int
-
-const (
-	Up Direction = iota
-	Down
-	Left
-	Right
-	DiagonalUpLeft
-	DiagonalUpRight
-	DiagonalDownLeft
-	DiagonalDownRight
-)
-
 const Xmas = "XMAS"
 
 func main() {
