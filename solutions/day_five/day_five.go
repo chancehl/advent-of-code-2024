@@ -42,6 +42,11 @@ func dayFiveSolution(input string) (int, int) {
 	return partOneResult, partTwoResult
 }
 
+// For the record this one really pissed me off... It looks like a directed graph problem to start.
+// The idea here is that we're wanting to ensure that every node in the graph is positioned in the
+// output so that it's connected nodes are always before it. HOWEVER, the input data is structured
+// in such a way that a cycle will never occur. It always stops one short. So for now I just brute
+// forced this one. The runtime is sub 5ms so I don't really care if this is less than optimized.
 func PartOne(input string) int {
 	manual := parseSafetyManual(input)
 	sum := 0
