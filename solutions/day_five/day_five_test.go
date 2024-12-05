@@ -7,9 +7,7 @@ type testCase struct {
 	expected int
 }
 
-func TestPartOne(t *testing.T) {
-	var tests = []testCase{
-		{input: `47|53
+const testInput = `47|53
 97|13
 97|61
 97|47
@@ -36,8 +34,10 @@ func TestPartOne(t *testing.T) {
 75,29,13
 75,97,47,61,53
 61,13,29
-97,13,75,29,47`, expected: 143},
-	}
+97,13,75,29,47`
+
+func TestPartOne(t *testing.T) {
+	var tests = []testCase{{input: testInput, expected: 143}}
 
 	for _, test := range tests {
 		t.Run("part one", func(t *testing.T) {
@@ -50,9 +50,7 @@ func TestPartOne(t *testing.T) {
 }
 
 func TestPartTwo(t *testing.T) {
-	var tests = []testCase{
-		{input: "abcd", expected: -1},
-	}
+	var tests = []testCase{{input: testInput, expected: 123}}
 
 	for _, test := range tests {
 		t.Run("part two", func(t *testing.T) {

@@ -13,8 +13,13 @@ import (
 	"github.com/chancehl/advent-of-code-2024/utils/timer"
 )
 
+type ElfSleighLaunchRule struct {
+	left  int
+	right int
+}
+
 type ElfSleighLaunchSafetyManual struct {
-	rules   ds.AdjacencyList
+	rules   []ElfSleighLaunchRule
 	updates [][]int
 }
 
@@ -48,22 +53,19 @@ func dayFiveSolution(input string) (int, int) {
 // in such a way that a cycle will never occur. It always stops one short. So for now I just brute
 // forced this one. The runtime is sub 5ms so I don't really care if this is less than optimized.
 func PartOne(input string) int {
-	manual := parseSafetyManual(input)
+	manual := NewElfSafetyManual(input)
 	sum := 0
 
 	for _, update := range manual.updates {
 		valid := true
-		for _, value := range update {
-			for _, connected := range manual.rules.Get(value) {
-				if slices.Contains(update, value) && slices.Contains(update, connected) {
-					leftIndex := slices.Index(update, value)
-					rightIndex := slices.Index(update, connected)
 
-					if leftIndex > rightIndex {
-						valid = false
-						break
-					}
-				}
+		for _, rule := range manual.rules {
+			lIndex := slices.Index(update, rule.left)
+			rIndex := slices.Index(update, rule.right)
+
+			if lIndex != -1 && rIndex != -1 && lIndex > rIndex {
+				valid = false
+				break
 			}
 		}
 
@@ -76,18 +78,48 @@ func PartOne(input string) int {
 }
 
 func PartTwo(input string) int {
-	return -1
+	manual := NewElfSafetyManual(input)
+	sum := 0
+
+	for _, update := range manual.updates {
+		valid := true
+
+		for _, rule := range manual.rules {
+			lIndex := slices.Index(update, rule.left)
+			rIndex := slices.Index(update, rule.right)
+
+			if lIndex != -1 && rIndex != -1 && lIndex > rIndex {
+				valid = false
+				break
+			}
+		}
+
+		if !valid {
+			adjancencyList := make(ds.AdjacencyList)
+
+			for _, rule := range manual.findRelevantRules(update) {
+				if slices.Contains(update, rule.left) && slices.Contains(update, rule.right) {
+					adjancencyList.Insert(rule.left, rule.right)
+				}
+			}
+
+			sorted := adjancencyList.TopologicalSort()
+			sum += sorted[len(sorted)/2]
+		}
+	}
+
+	return sum
 }
 
-func parseSafetyManual(input string) ElfSleighLaunchSafetyManual {
+func NewElfSafetyManual(input string) ElfSleighLaunchSafetyManual {
 	rules := parseRules(input)
 	updates := parseUpdates(input)
 
 	return ElfSleighLaunchSafetyManual{rules, updates}
 }
 
-func parseRules(input string) ds.AdjacencyList {
-	rules := make(ds.AdjacencyList)
+func parseRules(input string) []ElfSleighLaunchRule {
+	rules := []ElfSleighLaunchRule{}
 
 	parts := strings.Split(input, "\n\n")
 	rawRules := strings.Split(parts[0], "\n")
@@ -98,9 +130,7 @@ func parseRules(input string) ds.AdjacencyList {
 		left, _ := strconv.Atoi(numbers[0])
 		right, _ := strconv.Atoi(numbers[1])
 
-		if err := rules.Insert(left, right); err != nil {
-			panic("invalid input")
-		}
+		rules = append(rules, ElfSleighLaunchRule{left, right})
 	}
 
 	return rules
@@ -124,4 +154,16 @@ func parseUpdates(input string) [][]int {
 	}
 
 	return updates
+}
+
+func (manual ElfSleighLaunchSafetyManual) findRelevantRules(update []int) []ElfSleighLaunchRule {
+	rules := []ElfSleighLaunchRule{}
+	for _, value := range update {
+		for _, rule := range manual.rules {
+			if value == rule.left {
+				rules = append(rules, rule)
+			}
+		}
+	}
+	return rules
 }
