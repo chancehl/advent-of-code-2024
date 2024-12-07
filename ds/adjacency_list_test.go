@@ -1,18 +1,17 @@
 package ds
 
 import (
-	"fmt"
 	"slices"
 	"testing"
 )
 
 func TestAdjacencyList(t *testing.T) {
 	var tests = []struct {
-		list     AdjacencyList
+		list     AdjacencyList[int]
 		expected []int
 	}{
 		{
-			list:     make(AdjacencyList),
+			list:     make(AdjacencyList[int]),
 			expected: []int{},
 		},
 		{
@@ -30,7 +29,6 @@ func TestAdjacencyList(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run("topological sort", func(t *testing.T) {
-			fmt.Println(test.list)
 			actual := test.list.TopologicalSort()
 
 			if !slices.Equal(test.expected, actual) {

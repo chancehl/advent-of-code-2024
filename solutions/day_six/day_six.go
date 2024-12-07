@@ -6,41 +6,21 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/chancehl/advent-of-code-2024/ds"
 	"github.com/chancehl/advent-of-code-2024/utils/input"
 	"github.com/chancehl/advent-of-code-2024/utils/timer"
 )
 
-type ElfGuardOrientation int
+type GuardOrientation int
 
-const (
-	Up ElfGuardOrientation = iota
-	Down
-	Left
-	Right
-)
+type PatrolMap [][]string
 
-type ElfGuardToken = string
+type PatrolPath ds.Set[string]
 
-const (
-	GuardUp    ElfGuardToken = "^"
-	GuardDown  ElfGuardToken = "v"
-	GuardLeft  ElfGuardToken = "<"
-	GuardRight ElfGuardToken = ">"
-)
-
-type ElfGuardPatrolPath [][]int
-
-type ElfGuardPatrolMap [][]string
-
-type ElfGuardPatrolState struct {
-	guardMap         ElfGuardPatrolMap
-	guardRow         int
-	guardCol         int
-	guardIsPresent   bool
-	guardIsInLoop    bool
-	guardPath        ElfGuardPatrolPath
-	guardOrientation ElfGuardOrientation
-	guardToken       ElfGuardToken
+type PathNode struct {
+	row int
+	col int
+	dir int
 }
 
 func main() {
@@ -68,236 +48,151 @@ func daySixSolution(input string) (int, int) {
 }
 
 func PartOne(input string) int {
-	s := NewElfGuardPatrolState(input)
-	for s.guardIsPresent {
-		s.MoveGuard()
+	visited := ds.NewSet[string]()
+	patrolMap := ParsePatrolMap(input)
+
+	for patrolMap.IsGuardPresent() {
+		// 0. get current guard posn
+		guardPosn := patrolMap.GetGuardPosn()
+
+		// 1. add curr posn to visited
+		visited.Add(guardPosn.Hash(false))
+
+		// 2. determine next guard posn
+		nextGuardPosn := patrolMap.GetNextGuardPosn(*guardPosn)
+
+		// 3. update patrol map
+		if nextGuardPosn != nil {
+			token := GetTokenForDirection(nextGuardPosn.dir)
+			patrolMap[nextGuardPosn.row][nextGuardPosn.col] = token
+		}
+		patrolMap[guardPosn.row][guardPosn.col] = "."
+
 	}
-	return s.guardPath.CountDistinctPositions()
+
+	return visited.Size()
 }
 
 func PartTwo(input string) int {
-	obstructable := 0
-	allPossibleStates := GenerateAllPossibleStartingStates(input)
+	return -1
+}
 
-	for _, state := range allPossibleStates {
-		for state.guardIsPresent {
-			state.MoveGuard()
-
-			if state.guardIsInLoop {
-				obstructable += 1
-				break
-			}
-		}
+func ParsePatrolMap(input string) PatrolMap {
+	patrolMap := PatrolMap{}
+	for _, line := range strings.Split(input, "\n") {
+		patrolMap = append(patrolMap, strings.Split(line, ""))
 	}
-
-	return obstructable
+	return patrolMap
 }
 
-func NewElfGuardPatrolState(input string) ElfGuardPatrolState {
-	guardMap := [][]string{}
-	guardRow := -1
-	guardCol := -1
-
-	for row, line := range strings.Split(input, "\n") {
-		mapRow := []string{}
-		for col, char := range strings.Split(line, "") {
-			if char == GuardUp { // guard always starts in the up posn
-				guardRow = row
-				guardCol = col
-			}
-			mapRow = append(mapRow, char)
-		}
-		guardMap = append(guardMap, mapRow)
-	}
-
-	return ElfGuardPatrolState{
-		guardMap:         guardMap,
-		guardRow:         guardRow,
-		guardCol:         guardCol,
-		guardOrientation: Up,
-		guardToken:       GuardUp,
-		guardIsPresent:   true,
-		guardIsInLoop:    false,
-		guardPath:        [][]int{{guardRow, guardCol, int(Up)}}, // always append the starting posn to the path
-	}
-}
-
-func (s *ElfGuardPatrolState) MoveGuard() {
-	nextToken := s.GetTokenInFrontOfGuard()
-	if nextToken == nil {
-		oldRow, oldCol := s.GetCurrentGuardPosn()
-		s.guardMap[oldCol][oldRow] = "."
-		s.guardIsPresent = false
-	} else if *nextToken == "#" || *nextToken == "O" {
-		oldRow, oldCol := s.GetCurrentGuardPosn()
-		newRow, newCol := s.GetNextGuardTurnedPosn()
-		newGuardToken := s.GetRotatedGuardToken()
-		newGuardOrientation := s.GetRotatedGuardOrientation()
-
-		for _, existing := range s.guardPath {
-			if existing[0] == newRow && existing[1] == newCol && existing[2] == int(newGuardOrientation) {
-				s.guardIsInLoop = true
-			}
-		}
-
-		s.guardOrientation = newGuardOrientation
-		s.guardToken = newGuardToken
-		s.guardMap[newRow][newCol] = newGuardToken
-		s.guardMap[oldRow][oldCol] = "."
-		s.guardRow = newRow
-		s.guardCol = newCol
-		s.guardPath = append(s.guardPath, []int{newRow, newCol, int(newGuardOrientation)})
-	} else {
-		oldRow, oldCol := s.GetCurrentGuardPosn()
-		newRow, newCol := s.GetNextGuardForwardPosn()
-
-		for _, existing := range s.guardPath {
-			if existing[0] == newRow && existing[1] == newCol && existing[2] == int(s.guardOrientation) {
-				s.guardIsInLoop = true
-			}
-		}
-
-		s.guardMap[newRow][newCol] = s.guardToken
-		s.guardMap[oldRow][oldCol] = "."
-		s.guardRow = newRow
-		s.guardCol = newCol
-		s.guardPath = append(s.guardPath, []int{newRow, newCol, int(s.guardOrientation)})
-	}
-}
-
-func (s *ElfGuardPatrolState) GetCurrentGuardPosn() (int, int) {
-	return s.guardRow, s.guardCol
-}
-
-func (s *ElfGuardPatrolState) GetNextGuardTurnedPosn() (int, int) {
-	orientation := s.guardOrientation
-
-	row := s.guardRow
-	col := s.guardCol
-
-	switch orientation {
-	case Up:
-		return row, col + 1
-	case Down:
-		return row, col - 1
-	case Left:
-		return row - 1, col
-	case Right:
-		return row + 1, col
-	default:
-		return row, col
-	}
-}
-
-func (s *ElfGuardPatrolState) GetRotatedGuardToken() ElfGuardToken {
-	orientation := s.guardOrientation
-
-	switch orientation {
-	case Up:
-		return GuardRight
-	case Down:
-		return GuardLeft
-	case Left:
-		return GuardUp
-	case Right:
-		return GuardDown
-	default:
-		return s.guardToken
-	}
-}
-
-func (s *ElfGuardPatrolState) GetRotatedGuardOrientation() ElfGuardOrientation {
-	orientation := s.guardOrientation
-
-	switch orientation {
-	case Up:
-		return Right
-	case Down:
-		return Left
-	case Left:
-		return Up
-	case Right:
-		return Down
-	default:
-		return orientation
-	}
-}
-
-func (s *ElfGuardPatrolState) GetNextGuardForwardPosn() (int, int) {
-	orientation := s.guardOrientation
-
-	row := s.guardRow
-	col := s.guardCol
-
-	switch orientation {
-	case Up:
-		return row - 1, col
-	case Down:
-		return row + 1, col
-	case Left:
-		return row, col - 1
-	case Right:
-		return row, col + 1
-	default:
-		return row, col
-	}
-}
-
-func (s *ElfGuardPatrolState) GetTokenInFrontOfGuard() *string {
-	newRow, newCol := s.GetNextGuardForwardPosn()
-	return s.guardMap.GetTokenAt(newRow, newCol)
-}
-
-func (p *ElfGuardPatrolPath) CountDistinctPositions() int {
-	visited := make(map[string]bool)
-	distinct := 0
-	for _, posn := range *p {
-		key := fmt.Sprintf("%d,%d", posn[0], posn[1])
-		if !visited[key] {
-			distinct += 1
-		}
-		visited[key] = true
-
-	}
-	return distinct
-}
-
-func (m *ElfGuardPatrolMap) GetTokenAt(row, col int) *string {
-	if m.IsPositionInBounds(row, col) {
-		return &(*m)[row][col]
-	}
-	return nil
-}
-
-func (m *ElfGuardPatrolMap) IsPositionInBounds(row, col int) bool {
-	return row >= 0 && row <= len(*m)-1 && col >= 0 && col <= len((*m)[0])-1
-}
-
-func (m *ElfGuardPatrolMap) PrintMap() {
+func PrintPatrolMap(m PatrolMap) {
 	lines := []string{}
-	for _, row := range *m {
-		lines = append(lines, strings.Join(row, ""))
+	for row := range m {
+		lines = append(lines, strings.Join(m[row], ""))
 	}
 	fmt.Println(strings.Join(lines, "\n"))
 }
 
-func GenerateAllPossibleStartingStates(original string) []ElfGuardPatrolState {
-	states := []ElfGuardPatrolState{}
-
-	inputs := []string{}
-	chars := strings.Split(original, "")
-
-	for i, char := range chars {
-		charsCopy := strings.Split(original, "")
-		if char == "." {
-			charsCopy[i] = "#"
+func (m *PatrolMap) GetGuardPosn() *PathNode {
+	for row := range *m {
+		for col := range (*m)[row] {
+			isGuard, dir := IsGuard((*m)[row][col])
+			if isGuard {
+				return &PathNode{row, col, dir}
+			}
 		}
-		inputs = append(inputs, strings.Join(charsCopy, ""))
 	}
+	return nil
+}
 
-	for _, input := range inputs {
-		states = append(states, NewElfGuardPatrolState(input))
+func (m *PatrolMap) IsGuardPresent() bool {
+	curr := m.GetGuardPosn()
+	return curr != nil
+}
+
+func (m *PatrolMap) IsInBounds(node PathNode) bool {
+	rows := len(*m) - 1
+	cols := len((*m)[0]) - 1
+	return node.row >= 0 && node.row <= rows && node.col >= 0 && node.col <= cols
+}
+
+func (m *PatrolMap) GetNextGuardPosn(curr PathNode) *PathNode {
+	next := m.GetForwardPosn(curr)
+	if m.IsInBounds(next) {
+		token := (*m)[next.row][next.col]
+		if token == "#" {
+			var rotated PathNode
+			switch curr.dir {
+			case 0:
+				rotated = PathNode{row: curr.row, col: curr.col + 1, dir: 3}
+			case 1:
+				rotated = PathNode{row: curr.row, col: curr.col - 1, dir: 2}
+			case 2:
+				rotated = PathNode{row: curr.row - 1, col: curr.col, dir: 0}
+			case 3:
+				rotated = PathNode{row: curr.row + 1, col: curr.col, dir: 1}
+			}
+			return &rotated
+		}
+		return &next
 	}
+	return nil
+}
 
-	return states
+func (m *PatrolMap) GetForwardPosn(curr PathNode) PathNode {
+	var next PathNode
+	switch curr.dir {
+	case 0:
+		next = PathNode{row: curr.row - 1, col: curr.col, dir: curr.dir}
+	case 1:
+		next = PathNode{row: curr.row + 1, col: curr.col, dir: curr.dir}
+	case 2:
+		next = PathNode{row: curr.row, col: curr.col - 1, dir: curr.dir}
+	case 3:
+		next = PathNode{row: curr.row, col: curr.col + 1, dir: curr.dir}
+	}
+	return next
+}
+
+func (n *PathNode) Hash(includeDir bool) string {
+	if !includeDir {
+		return fmt.Sprintf("%d,%d", n.row, n.col)
+	}
+	return fmt.Sprintf("%d,%d,%d", n.row, n.col, n.dir)
+}
+
+func IsGuard(c string) (bool, int) {
+	if c == "^" {
+		return true, 0
+	}
+	if c == "v" {
+		return true, 1
+	}
+	if c == "<" {
+		return true, 2
+	}
+	if c == ">" {
+		return true, 3
+	}
+	return false, -1
+}
+
+func GetTokenForDirection(dir int) string {
+	switch dir {
+	case 0:
+		return "^"
+	case 1:
+		return "v"
+	case 2:
+		return "<"
+	case 3:
+		return ">"
+	default:
+		return "^"
+	}
+}
+
+func CreateGraphFromInput(input string) ds.AdjacencyList[string] {
+	graph := ds.NewAdjacencyList[string]()
+	return graph
 }

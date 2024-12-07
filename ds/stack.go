@@ -1,12 +1,12 @@
 package ds
 
-type Stack []int
+type Stack[T any] []T
 
-func (stack *Stack) Push(value int) {
+func (stack *Stack[T]) Push(value T) {
 	*stack = append(*stack, value)
 }
 
-func (stack *Stack) Pop() *int {
+func (stack *Stack[T]) Pop() *T {
 	if stack.IsEmpty() {
 		return nil
 	}
@@ -17,6 +17,6 @@ func (stack *Stack) Pop() *int {
 	return &last
 }
 
-func (stack *Stack) IsEmpty() bool {
+func (stack *Stack[T]) IsEmpty() bool {
 	return len(*stack) == 0
 }
