@@ -49,7 +49,7 @@ func daySixSolution(input string) (int, int) {
 
 func PartOne(input string) int {
 	visited := ds.NewSet[string]()
-	patrolMap := ParsePatrolMap(input)
+	patrolMap := Create2DMatrixFromInput(input)
 
 	for patrolMap.IsGuardPresent() {
 		// 0. get current guard posn
@@ -67,17 +67,21 @@ func PartOne(input string) int {
 			patrolMap[nextGuardPosn.row][nextGuardPosn.col] = token
 		}
 		patrolMap[guardPosn.row][guardPosn.col] = "."
-
 	}
 
 	return visited.Size()
 }
 
 func PartTwo(input string) int {
+	graph := CreateGraphFromInput(input)
+	visited := ds.NewSet[string]()
+
+	fmt.Println(graph, visited)
+
 	return -1
 }
 
-func ParsePatrolMap(input string) PatrolMap {
+func Create2DMatrixFromInput(input string) PatrolMap {
 	patrolMap := PatrolMap{}
 	for _, line := range strings.Split(input, "\n") {
 		patrolMap = append(patrolMap, strings.Split(line, ""))
@@ -85,12 +89,42 @@ func ParsePatrolMap(input string) PatrolMap {
 	return patrolMap
 }
 
-func PrintPatrolMap(m PatrolMap) {
-	lines := []string{}
-	for row := range m {
-		lines = append(lines, strings.Join(m[row], ""))
+func CreateGraphFromInput(input string) ds.AdjacencyList[string] {
+	graph := ds.NewAdjacencyList[string]()
+
+	patrolMap := Create2DMatrixFromInput(input)
+
+	for row := range patrolMap {
+		for col := range patrolMap[row] {
+			key := fmt.Sprintf("%d,%d", row, col)
+
+			// up neighbor
+			if row >= 1 && patrolMap[row-1][col] != "#" {
+				value := fmt.Sprintf("%d,%d", row-1, col)
+				graph.Insert(key, value)
+			}
+
+			// down neighbor
+			if row < len(patrolMap)-1 && patrolMap[row+1][col] != "#" {
+				value := fmt.Sprintf("%d,%d", row+1, col)
+				graph.Insert(key, value)
+			}
+
+			// left neighbor
+			if col >= 1 && patrolMap[row][col-1] != "#" {
+				value := fmt.Sprintf("%d,%d", row, col-1)
+				graph.Insert(key, value)
+			}
+
+			// right neighbor
+			if col < len(patrolMap[0])-1 && patrolMap[row][col+1] != "#" {
+				value := fmt.Sprintf("%d,%d", row, col+1)
+				graph.Insert(key, value)
+			}
+		}
 	}
-	fmt.Println(strings.Join(lines, "\n"))
+
+	return graph
 }
 
 func (m *PatrolMap) GetGuardPosn() *PathNode {
@@ -190,9 +224,4 @@ func GetTokenForDirection(dir int) string {
 	default:
 		return "^"
 	}
-}
-
-func CreateGraphFromInput(input string) ds.AdjacencyList[string] {
-	graph := ds.NewAdjacencyList[string]()
-	return graph
 }

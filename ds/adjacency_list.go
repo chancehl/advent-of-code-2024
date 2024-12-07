@@ -27,13 +27,13 @@ func (list AdjacencyList[T]) Get(value T) []T {
 	return list[value]
 }
 
-func (list AdjacencyList[T]) Insert(value T, new T) error {
-	if list[value] != nil && slices.Contains(list[value], new) {
-		return fmt.Errorf("value %v already exists in adjacency list (nodes=%v)", value, list[value])
+func (list AdjacencyList[T]) Insert(key T, value T) error {
+	if list[key] != nil && slices.Contains(list[key], value) {
+		return fmt.Errorf("value already exists in adjacency list (nodes=%v)", list[key])
 	}
 
-	updated := append(list[value], new)
-	list[value] = updated
+	updated := append(list[key], value)
+	list[key] = updated
 
 	return nil
 }
