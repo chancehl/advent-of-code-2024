@@ -37,6 +37,7 @@ type ElfGuardPatrolState struct {
 	guardRow         int
 	guardCol         int
 	guardIsPresent   bool
+	guardIsInLoop    bool
 	guardPath        ElfGuardPatrolPath
 	guardOrientation ElfGuardOrientation
 	guardToken       ElfGuardToken
@@ -75,7 +76,21 @@ func PartOne(input string) int {
 }
 
 func PartTwo(input string) int {
-	return -1
+	obstructable := 0
+	allPossibleStates := GenerateAllPossibleStartingStates(input)
+
+	for _, state := range allPossibleStates {
+		for state.guardIsPresent {
+			state.MoveGuard()
+
+			if state.guardIsInLoop {
+				obstructable += 1
+				break
+			}
+		}
+	}
+
+	return obstructable
 }
 
 func NewElfGuardPatrolState(input string) ElfGuardPatrolState {
@@ -102,7 +117,8 @@ func NewElfGuardPatrolState(input string) ElfGuardPatrolState {
 		guardOrientation: Up,
 		guardToken:       GuardUp,
 		guardIsPresent:   true,
-		guardPath:        [][]int{{guardRow, guardCol}}, // always append the starting posn to the path
+		guardIsInLoop:    false,
+		guardPath:        [][]int{{guardRow, guardCol, int(Up)}}, // always append the starting posn to the path
 	}
 }
 
@@ -112,11 +128,17 @@ func (s *ElfGuardPatrolState) MoveGuard() {
 		oldRow, oldCol := s.GetCurrentGuardPosn()
 		s.guardMap[oldCol][oldRow] = "."
 		s.guardIsPresent = false
-	} else if *nextToken == "#" {
+	} else if *nextToken == "#" || *nextToken == "O" {
 		oldRow, oldCol := s.GetCurrentGuardPosn()
 		newRow, newCol := s.GetNextGuardTurnedPosn()
 		newGuardToken := s.GetRotatedGuardToken()
 		newGuardOrientation := s.GetRotatedGuardOrientation()
+
+		for _, existing := range s.guardPath {
+			if existing[0] == newRow && existing[1] == newCol && existing[2] == int(newGuardOrientation) {
+				s.guardIsInLoop = true
+			}
+		}
 
 		s.guardOrientation = newGuardOrientation
 		s.guardToken = newGuardToken
@@ -124,16 +146,22 @@ func (s *ElfGuardPatrolState) MoveGuard() {
 		s.guardMap[oldRow][oldCol] = "."
 		s.guardRow = newRow
 		s.guardCol = newCol
-		s.guardPath = append(s.guardPath, []int{newRow, newCol})
+		s.guardPath = append(s.guardPath, []int{newRow, newCol, int(newGuardOrientation)})
 	} else {
 		oldRow, oldCol := s.GetCurrentGuardPosn()
 		newRow, newCol := s.GetNextGuardForwardPosn()
+
+		for _, existing := range s.guardPath {
+			if existing[0] == newRow && existing[1] == newCol && existing[2] == int(s.guardOrientation) {
+				s.guardIsInLoop = true
+			}
+		}
 
 		s.guardMap[newRow][newCol] = s.guardToken
 		s.guardMap[oldRow][oldCol] = "."
 		s.guardRow = newRow
 		s.guardCol = newCol
-		s.guardPath = append(s.guardPath, []int{newRow, newCol})
+		s.guardPath = append(s.guardPath, []int{newRow, newCol, int(s.guardOrientation)})
 	}
 }
 
@@ -253,6 +281,23 @@ func (m *ElfGuardPatrolMap) PrintMap() {
 	fmt.Println(strings.Join(lines, "\n"))
 }
 
-func IsGuardToken(s string) bool {
-	return s == GuardUp || s == GuardDown || s == GuardLeft || s == GuardRight
+func GenerateAllPossibleStartingStates(original string) []ElfGuardPatrolState {
+	states := []ElfGuardPatrolState{}
+
+	inputs := []string{}
+	chars := strings.Split(original, "")
+
+	for i, char := range chars {
+		charsCopy := strings.Split(original, "")
+		if char == "." {
+			charsCopy[i] = "#"
+		}
+		inputs = append(inputs, strings.Join(charsCopy, ""))
+	}
+
+	for _, input := range inputs {
+		states = append(states, NewElfGuardPatrolState(input))
+	}
+
+	return states
 }
