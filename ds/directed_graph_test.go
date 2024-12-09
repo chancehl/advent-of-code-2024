@@ -7,11 +7,11 @@ import (
 
 func TestAdjacencyList(t *testing.T) {
 	var tests = []struct {
-		list     AdjacencyList[int]
+		list     DirectedGraph[int]
 		expected []int
 	}{
 		{
-			list:     make(AdjacencyList[int]),
+			list:     make(DirectedGraph[int]),
 			expected: []int{},
 		},
 		{

@@ -2,6 +2,10 @@ package ds
 
 type Stack[T any] []T
 
+func NewStack[T any]() Stack[T] {
+	return []T{}
+}
+
 func (stack *Stack[T]) Push(value T) {
 	*stack = append(*stack, value)
 }

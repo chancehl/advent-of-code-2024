@@ -73,10 +73,15 @@ func PartOne(input string) int {
 }
 
 func PartTwo(input string) int {
-	graph := CreateGraphFromInput(input)
-	visited := ds.NewSet[string]()
+	inputs := []string{}
 
-	fmt.Println(graph, visited)
+	for index, char := range strings.Split(input, "") {
+		if char == "." {
+			left := input[0:index]
+			right := input[index+1:]
+			inputs = append(inputs, left+"#"+right)
+		}
+	}
 
 	return -1
 }
@@ -89,8 +94,8 @@ func Create2DMatrixFromInput(input string) PatrolMap {
 	return patrolMap
 }
 
-func CreateGraphFromInput(input string) ds.AdjacencyList[string] {
-	graph := ds.NewAdjacencyList[string]()
+func CreateGraphFromInput(input string) ds.DirectedGraph[string] {
+	graph := ds.NewDirectedGraph[string]()
 
 	patrolMap := Create2DMatrixFromInput(input)
 

@@ -95,15 +95,15 @@ func PartTwo(input string) int {
 		}
 
 		if !valid {
-			adjancencyList := make(ds.AdjacencyList)
+			graph := ds.DirectedGraph[int]{}
 
 			for _, rule := range manual.findRelevantRules(update) {
 				if slices.Contains(update, rule.left) && slices.Contains(update, rule.right) {
-					adjancencyList.Insert(rule.left, rule.right)
+					graph.Insert(rule.left, rule.right)
 				}
 			}
 
-			sorted := adjancencyList.TopologicalSort()
+			sorted := graph.TopologicalSort()
 			sum += sorted[len(sorted)/2]
 		}
 	}
