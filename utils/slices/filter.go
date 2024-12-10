@@ -14,3 +14,12 @@ func Any[T any](s []T, filter func(T) bool) bool {
 	filtered := Filter(s, filter)
 	return len(filtered) > 0
 }
+
+func All[T any](s []T, filter func(T) bool) bool {
+	for _, element := range s {
+		if !filter(element) {
+			return false
+		}
+	}
+	return true
+}
