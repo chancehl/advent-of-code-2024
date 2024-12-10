@@ -41,40 +41,24 @@ func daySevenSolution(input string) (int, int) {
 }
 
 func PartOne(input string) int {
-	validEquations := []ElfEquation{}
 	result := 0
-
 	equations := ParseEquationsFromInput(input)
-
 	for _, equation := range equations {
 		if IsValidEquation(equation, true) {
-			validEquations = append(validEquations, equation)
+			result += equation.target
 		}
 	}
-
-	for _, equation := range validEquations {
-		result += equation.target
-	}
-
 	return result
 }
 
 func PartTwo(input string) int {
-	validEquations := []ElfEquation{}
 	result := 0
-
 	equations := ParseEquationsFromInput(input)
-
 	for _, equation := range equations {
 		if IsValidEquation(equation, false) {
-			validEquations = append(validEquations, equation)
+			result += equation.target
 		}
 	}
-
-	for _, equation := range validEquations {
-		result += equation.target
-	}
-
 	return result
 }
 
@@ -101,22 +85,23 @@ func ParseEquationsFromInput(input string) []ElfEquation {
 }
 
 func IsValidEquation(e ElfEquation, simplified bool) bool {
-	var compute func(int, []int) bool
+	var validate func(int, []int) bool
 
-	compute = func(acc int, rest []int) bool {
-		if len(rest) == 0 {
+	validate = func(acc int, operands []int) bool {
+		if len(operands) == 0 {
 			return acc == e.target
 		}
 
-		left := rest[0]
+		left := operands[0]
+		rest := operands[1:]
 
 		if !simplified {
 			concatted, _ := strconv.Atoi(fmt.Sprintf("%d%d", acc, left))
-			return compute(acc*left, rest[1:]) || compute(acc+left, rest[1:]) || compute(concatted, rest[1:])
+			return validate(acc*left, rest) || validate(acc+left, rest) || validate(concatted, rest)
 		}
 
-		return compute(acc*left, rest[1:]) || compute(acc+left, rest[1:])
+		return validate(acc*left, rest) || validate(acc+left, rest)
 	}
 
-	return compute(e.operands[0], e.operands[1:])
+	return validate(e.operands[0], e.operands[1:])
 }
