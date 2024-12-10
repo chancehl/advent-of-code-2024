@@ -9,3 +9,8 @@ func Filter[T any](s []T, filter func(T) bool) []T {
 	}
 	return data
 }
+
+func Any[T any](s []T, filter func(T) bool) bool {
+	filtered := Filter(s, filter)
+	return len(filtered) > 0
+}

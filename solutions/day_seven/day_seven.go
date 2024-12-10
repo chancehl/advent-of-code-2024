@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/chancehl/advent-of-code-2024/utils/input"
-	"github.com/chancehl/advent-of-code-2024/utils/slices"
 	"github.com/chancehl/advent-of-code-2024/utils/timer"
 )
 
@@ -45,23 +44,38 @@ func PartOne(input string) int {
 	validEquations := []ElfEquation{}
 	result := 0
 
-	// equations := ParseEquationsFromInput(input)
+	equations := ParseEquationsFromInput(input)
 
-	// for _, equation := range equations {
-	// 	if IsValidEquation(equation.target, equation.operands) {
-	// 		validEquations = append(validEquations, equation)
-	// 	}
-	// }
+	for _, equation := range equations {
+		if IsValidEquation(equation, true) {
+			validEquations = append(validEquations, equation)
+		}
+	}
 
 	for _, equation := range validEquations {
 		result += equation.target
 	}
 
-	return -1
+	return result
 }
 
 func PartTwo(input string) int {
-	return -1
+	validEquations := []ElfEquation{}
+	result := 0
+
+	equations := ParseEquationsFromInput(input)
+
+	for _, equation := range equations {
+		if IsValidEquation(equation, false) {
+			validEquations = append(validEquations, equation)
+		}
+	}
+
+	for _, equation := range validEquations {
+		result += equation.target
+	}
+
+	return result
 }
 
 func ParseEquationsFromInput(input string) []ElfEquation {
@@ -86,35 +100,23 @@ func ParseEquationsFromInput(input string) []ElfEquation {
 	return equations
 }
 
-func IsValidEquation(target int, operands []int) bool {
-	permutations := GenerateOperationPermutations(len(operands) - 1)
+func IsValidEquation(e ElfEquation, simplified bool) bool {
+	var compute func(int, []int) bool
 
-	filteredPermutations := slices.Filter(permutations, func(s string) bool {
-		return len(s) == len(operands)-1
-	})
-
-	fmt.Println(filteredPermutations)
-
-	return false
-}
-
-func GenerateOperationPermutations(n int) []string {
-	permutations := []string{"*", "+"}
-
-	var permute func(int, *[]string) *[]string
-
-	permute = func(i int, visited *[]string) *[]string {
-		if i == 0 {
-			return visited
+	compute = func(acc int, rest []int) bool {
+		if len(rest) == 0 {
+			return acc == e.target
 		}
 
-		for _, existing := range *visited {
-			*visited = append(*visited, existing+"*")
-			*visited = append(*visited, existing+"+")
+		left := rest[0]
+
+		if !simplified {
+			concatted, _ := strconv.Atoi(fmt.Sprintf("%d%d", acc, left))
+			return compute(acc*left, rest[1:]) || compute(acc+left, rest[1:]) || compute(concatted, rest[1:])
 		}
 
-		return permute(i-1, visited)
+		return compute(acc*left, rest[1:]) || compute(acc+left, rest[1:])
 	}
 
-	return *permute(n, &permutations)
+	return compute(e.operands[0], e.operands[1:])
 }

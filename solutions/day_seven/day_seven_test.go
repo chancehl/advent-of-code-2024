@@ -1,7 +1,6 @@
 package main
 
 import (
-	"slices"
 	"testing"
 
 	"github.com/chancehl/advent-of-code-2024/utils"
@@ -26,7 +25,7 @@ func TestPartOne(t *testing.T) {
 				21037: 9 7 18 13
 				292: 11 6 16 20
 			`),
-			expected: -1,
+			expected: 3749,
 		},
 	}
 
@@ -42,7 +41,20 @@ func TestPartOne(t *testing.T) {
 
 func TestPartTwo(t *testing.T) {
 	var tests = []testCase{
-		{input: "abcd", expected: -1},
+		{
+			input: utils.Dedent(`
+				190: 10 19
+				3267: 81 40 27
+				83: 17 5
+				156: 15 6
+				7290: 6 8 6 15
+				161011: 16 10 13
+				192: 17 8 14
+				21037: 9 7 18 13
+				292: 11 6 16 20
+			`),
+			expected: 11387,
+		},
 	}
 
 	for _, test := range tests {
@@ -57,55 +69,58 @@ func TestPartTwo(t *testing.T) {
 
 func TestIsValidEquation(t *testing.T) {
 	var tests = []struct {
-		input    ElfEquation
-		expected bool
+		input      ElfEquation
+		expected   bool
+		simplified bool
 	}{
+
 		{
-			input:    ElfEquation{target: 190, operands: []int{19, 10}},
-			expected: true,
+			input:      ElfEquation{target: 6, operands: []int{1, 2, 3}},
+			simplified: true,
+			expected:   true,
 		},
-		// {
-		// 	input:    ElfEquation{target: 3267, operands: []int{81, 40, 27}},
-		// 	expected: true,
-		// },
-		// {
-		// 	input:    ElfEquation{target: 292, operands: []int{11, 6, 16, 20}},
-		// 	expected: true,
-		// },
+		{
+			input:      ElfEquation{target: 190, operands: []int{19, 10}},
+			simplified: true,
+			expected:   true,
+		},
+		{
+			input:      ElfEquation{target: 3267, operands: []int{81, 40, 27}},
+			simplified: true,
+			expected:   true,
+		},
+		{
+			input:      ElfEquation{target: 292, operands: []int{11, 6, 16, 20}},
+			simplified: true,
+			expected:   true,
+		},
+		{
+			input:      ElfEquation{target: 156, operands: []int{15, 6}},
+			simplified: true,
+			expected:   false,
+		},
+		{
+			input:      ElfEquation{target: 7290, operands: []int{6, 8, 6, 15}},
+			simplified: true,
+			expected:   false,
+		},
+		{
+			input:      ElfEquation{target: 156, operands: []int{15, 6}},
+			simplified: false,
+			expected:   true,
+		},
+		{
+			input:      ElfEquation{target: 7290, operands: []int{6, 8, 6, 15}},
+			simplified: false,
+			expected:   true,
+		},
 	}
 
 	for _, test := range tests {
-		t.Run("IsValidEquation", func(t *testing.T) {
-			actual := IsValidEquation(test.input.target, test.input.operands)
+		t.Run("IsValidEquationPart2", func(t *testing.T) {
+			actual := IsValidEquation(test.input, test.simplified)
 			if actual != test.expected {
-				t.Errorf("IsValidEquation(%+v) failed (expected=%v, actual=%v)\n", test.input, test.expected, actual)
-			}
-		})
-	}
-}
-
-func TestGenerateOperationPermutations(t *testing.T) {
-	var tests = []struct {
-		n        int
-		expected []string
-	}{
-		{
-			n:        1,
-			expected: []string{"*", "+"},
-		},
-		{
-			n:        2,
-			expected: []string{"**", "++", "+*", "*+"},
-		},
-	}
-
-	for _, test := range tests {
-		t.Run("GenerateOperationPermutations", func(t *testing.T) {
-			actual := GenerateOperationPermutations(test.n)
-			for _, expected := range test.expected {
-				if !slices.Contains(actual, expected) {
-					t.Errorf("GenerateOperationPermutations(%d) failed (expected=%v, actual=%v)\n", test.n, expected, actual)
-				}
+				t.Errorf("IsValidEquation(%v) failed (expected=%v, actual=%v)\n", test.input, test.expected, actual)
 			}
 		})
 	}
