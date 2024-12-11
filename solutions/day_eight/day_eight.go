@@ -46,8 +46,7 @@ func dayEightSolution(input string) (int, int) {
 }
 
 func PartOne(input string) int {
-	antennaMap := CreateAntennaMapFromInput(input)
-	return len(antennaMap.ComputeAntinodes())
+	return -1
 }
 
 func PartTwo(input string) int {

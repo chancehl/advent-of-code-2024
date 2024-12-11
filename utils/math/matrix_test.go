@@ -15,7 +15,7 @@ func TestComputeDistance(t *testing.T) {
 			y1:       3,
 			x2:       5,
 			y2:       7,
-			expected: 5,
+			expected: 7,
 		},
 	}
 

@@ -27,7 +27,7 @@ func TestPartOne(t *testing.T) {
 
 func TestPartTwo(t *testing.T) {
 	var tests = []testCase{
-		{input: "abcd", expected: -1},
+		{input: "2333133121414131402", expected: 2858},
 	}
 
 	for _, test := range tests {
@@ -60,7 +60,7 @@ func TestCreateExpandedDiskMap(t *testing.T) {
 	}
 }
 
-func TestMoveFiles(t *testing.T) {
+func TestMovePartialFiles(t *testing.T) {
 	var tests = []struct {
 		input    string
 		expected string
@@ -70,10 +70,28 @@ func TestMoveFiles(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run("MoveFiles", func(t *testing.T) {
-			actual := MoveFiles(ConvertStringToDiskmap(test.input))
+		t.Run("MovePartialFiles", func(t *testing.T) {
+			actual := MovePartialFiles(ConvertStringToDiskmap(test.input))
 			if !slices.Equal(actual, ConvertStringToDiskmap(test.expected)) {
 				t.Errorf("test failed (expected=%v, actual=%v)\n", test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestMoveWholeFiles(t *testing.T) {
+	var tests = []struct {
+		input    string
+		expected string
+	}{
+		{input: "00...111...2...333.44.5555.6666.777.888899", expected: "00992111777.44.333....5555.6666.....8888.."},
+	}
+
+	for _, test := range tests {
+		t.Run("MoveWholeFiles", func(t *testing.T) {
+			actual := MoveWholeFiles(ConvertStringToDiskmap(test.input))
+			if !slices.Equal(actual, ConvertStringToDiskmap(test.expected)) {
+				t.Errorf("test failed\n- expected=%v \n- actual=%v\n", test.expected, ConvertDiskmapToString(actual))
 			}
 		})
 	}
