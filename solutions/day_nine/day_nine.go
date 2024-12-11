@@ -11,6 +11,8 @@ import (
 	"github.com/chancehl/advent-of-code-2024/utils/timer"
 )
 
+const Empty = -1
+
 func main() {
 	path, err := filepath.Abs("solutions/day_nine/input.txt")
 	if err != nil {
@@ -38,61 +40,83 @@ func dayNineSolution(input string) (int, int) {
 func PartOne(input string) int {
 	dm := CreateExpandedDiskMap(input)
 	expandedDm := MoveFiles(dm)
-	checksum := CalculateChecksum(expandedDm)
-	return checksum
+	return CalculateChecksum(expandedDm)
 }
 
 func PartTwo(input string) int {
 	return -1
 }
 
-func CreateExpandedDiskMap(input string) string {
-	fileId := 0
-	diskmap := []string{}
+func CreateExpandedDiskMap(input string) []int {
+	diskmap := []int{}
 
-	for charIndex, char := range strings.Split(input, "") {
-		num, _ := strconv.Atoi(char)
+	for i, c := range strings.Split(input, "") {
+		num, _ := strconv.Atoi(c)
 
-		if charIndex%2 == 0 {
-			for i := 0; i < num; i++ {
-				diskmap = append(diskmap, strconv.Itoa(fileId))
+		if i%2 == 0 {
+			for j := 0; j < num; j++ {
+				diskmap = append(diskmap, i/2)
 			}
-			fileId += 1
 		} else {
-			for i := 0; i < num; i++ {
-				diskmap = append(diskmap, ".")
+			for j := 0; j < num; j++ {
+				diskmap = append(diskmap, Empty)
 			}
 		}
 	}
-	return strings.Join(diskmap, "")
+
+	return diskmap
 }
 
-func MoveFiles(dm string) string {
-	chars := strings.Split(dm, "")
-
+func MoveFiles(dm []int) []int {
 	left := 0
-	right := len(chars) - 1
+	right := len(dm) - 1
 
 	for left < right {
-		if chars[left] == "." && chars[right] != "." {
-			chars[left] = chars[right]
-			chars[right] = "."
-		} else if chars[left] != "." {
-			left += 1
-		} else if chars[right] == "." {
+		if dm[left] == Empty && dm[right] != Empty {
+			dm[left], dm[right] = dm[right], dm[left]
+			left++
+			right--
+		} else if dm[left] != Empty {
+			left++
+		} else if dm[right] == Empty {
 			right -= 1
 		}
 	}
 
+	return dm
+}
+
+func CalculateChecksum(dm []int) int {
+	checksum := 0
+	for i, n := range dm {
+		if n != Empty {
+			checksum += (n * i)
+		}
+	}
+	return checksum
+}
+
+func ConvertDiskmapToString(dm []int) string {
+	chars := []string{}
+	for _, num := range dm {
+		if num == -1 {
+			chars = append(chars, ".")
+		} else {
+			chars = append(chars, strconv.Itoa(num))
+		}
+	}
 	return strings.Join(chars, "")
 }
 
-func CalculateChecksum(dm string) int {
-	checksum := 0
-	chars := strings.Split(dm, "")
-	for i := range chars {
-		num, _ := strconv.Atoi(chars[i])
-		checksum += (num * i)
+func ConvertStringToDiskmap(dm string) []int {
+	nums := []int{}
+	for _, char := range strings.Split(dm, "") {
+		if char == "." {
+			nums = append(nums, -1)
+		} else {
+			num, _ := strconv.Atoi(char)
+			nums = append(nums, num)
+		}
 	}
-	return checksum
+	return nums
 }

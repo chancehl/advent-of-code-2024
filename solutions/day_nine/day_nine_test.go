@@ -1,6 +1,7 @@
 package main
 
 import (
+	"slices"
 	"testing"
 )
 
@@ -45,14 +46,15 @@ func TestCreateExpandedDiskMap(t *testing.T) {
 		expected string
 	}{
 		{input: "12345", expected: "0..111....22222"},
+		{input: "90909", expected: "000000000111111111222222222"},
 		{input: "2333133121414131402", expected: "00...111...2...333.44.5555.6666.777.888899"},
 	}
 
 	for _, test := range tests {
 		t.Run("CreateExpandedDiskMap", func(t *testing.T) {
 			actual := CreateExpandedDiskMap(test.input)
-			if actual != test.expected {
-				t.Errorf("test failed (expected=%s, actual=%s)\n", test.expected, actual)
+			if !slices.Equal(actual, ConvertStringToDiskmap(test.expected)) {
+				t.Errorf("test failed (expected=%v, actual=%v)\n", test.expected, actual)
 			}
 		})
 	}
@@ -69,9 +71,9 @@ func TestMoveFiles(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run("MoveFiles", func(t *testing.T) {
-			actual := MoveFiles(test.input)
-			if actual != test.expected {
-				t.Errorf("test failed (expected=%s, actual=%s)\n", test.expected, actual)
+			actual := MoveFiles(ConvertStringToDiskmap(test.input))
+			if !slices.Equal(actual, ConvertStringToDiskmap(test.expected)) {
+				t.Errorf("test failed (expected=%v, actual=%v)\n", test.expected, actual)
 			}
 		})
 	}
@@ -87,7 +89,7 @@ func TestCalculateChecksum(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run("CalculateChecksum", func(t *testing.T) {
-			actual := CalculateChecksum(test.input)
+			actual := CalculateChecksum(ConvertStringToDiskmap(test.input))
 			if actual != test.expected {
 				t.Errorf("test failed (expected=%d, actual=%d)\n", test.expected, actual)
 			}
