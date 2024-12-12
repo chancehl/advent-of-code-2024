@@ -23,8 +23,12 @@ func (g DirectedGraph[T]) Vertices() []T {
 	return vertices
 }
 
-func (g DirectedGraph[T]) Get(value T) []T {
-	return g[value]
+func (g DirectedGraph[T]) Get(key T) []T {
+	return g[key]
+}
+
+func (g DirectedGraph[T]) AddKey(key T) {
+	g[key] = []T{}
 }
 
 func (g DirectedGraph[T]) Insert(key T, value T) error {
