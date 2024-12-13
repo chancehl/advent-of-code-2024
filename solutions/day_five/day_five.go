@@ -95,7 +95,7 @@ func PartTwo(input string) int {
 		}
 
 		if !valid {
-			graph := ds.DirectedGraph[int]{}
+			graph := ds.NewDirectedGraph[int](ds.DefaultComparator)
 
 			for _, rule := range manual.findRelevantRules(update) {
 				if slices.Contains(update, rule.left) && slices.Contains(update, rule.right) {

@@ -4,6 +4,7 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/chancehl/advent-of-code-2024/ds"
 	"github.com/chancehl/advent-of-code-2024/utils"
 )
 
@@ -58,62 +59,6 @@ func TestPartTwo(t *testing.T) {
 	}
 }
 
-func TestComputeAntinodes(t *testing.T) {
-	var tests = []struct {
-		input    AntennaMap
-		expected map[string][]Coordinates
-	}{
-		{
-			input: CreateAntennaMapFromInput(utils.Dedent(`
-				..........
-				..........
-				..........
-				....a.....
-				..........
-				.....a....
-				..........
-				..........
-				..........
-				..........
-			`)),
-			expected: map[string][]Coordinates{
-				"a": {
-					{row: 1, col: 3},
-					{row: 7, col: 6},
-				},
-			},
-		},
-		// {
-		// 	input: CreateAntennaMapFromInput(utils.Dedent(`
-		// 		............
-		// 		........0...
-		// 		.....0......
-		// 		.......0....
-		// 		....0.......
-		// 		......A.....
-		// 		............
-		// 		............
-		// 		........A...
-		// 		.........A..
-		// 		............
-		// 		............
-		// 	`)),
-		// 	expected: []Coordinates{},
-		// },
-	}
-
-	for _, test := range tests {
-		t.Run("ComputeAntinodes", func(t *testing.T) {
-			actual := test.input.ComputeAntinodes()
-			for key := range test.expected {
-				if !slices.Equal(actual[key], test.expected[key]) {
-					t.Errorf("test failed (expected=%v, actual=%v)\n", test.expected, actual)
-				}
-			}
-		})
-	}
-}
-
 func TestFindAntennae(t *testing.T) {
 	input := utils.Dedent(`
 		............
@@ -134,21 +79,21 @@ func TestFindAntennae(t *testing.T) {
 
 	var tests = []struct {
 		input    AntennaMap
-		expected map[string][]Coordinates
+		expected map[string][]ds.Coordinates
 	}{
 		{
 			input: antennaMap,
-			expected: map[string][]Coordinates{
+			expected: map[string][]ds.Coordinates{
 				"A": {
-					{row: 5, col: 6},
-					{row: 8, col: 8},
-					{row: 9, col: 9},
+					{Row: 5, Col: 6},
+					{Row: 8, Col: 8},
+					{Row: 9, Col: 9},
 				},
 				"0": {
-					{row: 1, col: 8},
-					{row: 2, col: 5},
-					{row: 3, col: 7},
-					{row: 4, col: 4},
+					{Row: 1, Col: 8},
+					{Row: 2, Col: 5},
+					{Row: 3, Col: 7},
+					{Row: 4, Col: 4},
 				},
 			},
 		},

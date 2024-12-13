@@ -54,7 +54,10 @@ func PartOne(input string) int {
 
 	for _, start := range trailheads {
 		for _, end := range trailends {
-			score += CheckPath(graph, start, end)
+			path := graph.FindPath(start, end)
+			if path != nil {
+				score++
+			}
 		}
 	}
 
@@ -62,7 +65,24 @@ func PartOne(input string) int {
 }
 
 func PartTwo(input string) int {
-	return -1
+	matrix := Create2DMatrix(input)
+
+	graph := CreateGraph(matrix)
+	trailheads := FindCoordinates(matrix, TrailStart)
+	trailends := FindCoordinates(matrix, TrailEnd)
+
+	validPaths := []ds.DirectedGraphPath[ds.Coordinates]{}
+
+	for _, start := range trailheads {
+		for _, end := range trailends {
+			paths := graph.FindDistinctPaths(start, end)
+			if paths != nil {
+				validPaths = append(validPaths, paths...)
+			}
+		}
+	}
+
+	return len(validPaths)
 }
 
 func Create2DMatrix(input string) [][]int {
@@ -83,7 +103,7 @@ func Create2DMatrix(input string) [][]int {
 }
 
 func CreateGraph(matrix [][]int) ds.DirectedGraph[ds.Coordinates] {
-	graph := ds.NewDirectedGraph[ds.Coordinates]()
+	graph := ds.NewDirectedGraph(ds.CoordinateComparator)
 
 	for row := range matrix {
 		for col := range matrix[row] {
@@ -139,40 +159,4 @@ func FindCoordinates(matrix [][]int, marker int) []ds.Coordinates {
 		}
 	}
 	return trailheads
-}
-
-func CheckPath(graph ds.DirectedGraph[ds.Coordinates], start ds.Coordinates, end ds.Coordinates) int {
-	var bfs func(ds.Coordinates, ds.Coordinates) int = func(s ds.Coordinates, e ds.Coordinates) int {
-		visited := ds.NewSet[*Path]()
-		queue := ds.NewQueue[*Path]()
-
-		// mark current as visisted and enqueue
-		visited.Add(&Path{s})
-		queue.Enqueue(&Path{s})
-
-		for !queue.IsEmpty() {
-			path := queue.Dequeue()
-			lastNode := (*path)[len(*path)-1]
-
-			if lastNode == e {
-				return 1
-			}
-
-			if len(*path) > MaxPathSize {
-				return 0
-			}
-
-			for _, coord := range graph.Get(lastNode) {
-				newPath := Path{}
-				newPath = append(newPath, *path...)
-				newPath = append(newPath, coord)
-
-				queue.Enqueue(&newPath)
-			}
-		}
-
-		return 0
-	}
-
-	return bfs(start, end)
 }

@@ -11,18 +11,18 @@ func TestAdjacencyList(t *testing.T) {
 		expected []int
 	}{
 		{
-			list:     make(DirectedGraph[int]),
+			list:     NewDirectedGraph[int](DefaultComparator),
 			expected: []int{},
 		},
 		{
-			list: map[int][]int{
+			list: NewDirectedGraphFromMap(map[int][]int{
 				0: {},
 				1: {},
 				2: {3},
 				3: {1},
 				4: {0, 1},
 				5: {2, 0},
-			},
+			}, DefaultComparator),
 			expected: []int{5, 4, 2, 3, 1, 0},
 		},
 	}

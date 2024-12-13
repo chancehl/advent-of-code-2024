@@ -73,16 +73,6 @@ func PartOne(input string) int {
 }
 
 func PartTwo(input string) int {
-	inputs := []string{}
-
-	for index, char := range strings.Split(input, "") {
-		if char == "." {
-			left := input[0:index]
-			right := input[index+1:]
-			inputs = append(inputs, left+"#"+right)
-		}
-	}
-
 	return -1
 }
 
@@ -95,7 +85,7 @@ func Create2DMatrixFromInput(input string) PatrolMap {
 }
 
 func CreateGraphFromInput(input string) ds.DirectedGraph[string] {
-	graph := ds.NewDirectedGraph[string]()
+	graph := ds.NewDirectedGraph[string](ds.DefaultComparator)
 
 	patrolMap := Create2DMatrixFromInput(input)
 

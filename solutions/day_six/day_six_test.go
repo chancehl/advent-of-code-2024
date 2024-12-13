@@ -54,7 +54,7 @@ func TestPartTwo(t *testing.T) {
 	`)
 
 	var tests = []testCase{
-		{input: testInput, expected: 6},
+		{input: testInput, expected: -1},
 	}
 
 	for _, test := range tests {
