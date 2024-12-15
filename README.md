@@ -37,45 +37,49 @@ Advent of Code is an Advent calendar of small programming puzzles for a variety 
 ## Execution output
 
 ```
-🎄 running solutions/day_eight/day_eight.go...
+🎅 running solutions/day_eight/day_eight.go...
 [day eight / part one] result=-1, time=0.00ms
 [day eight / part two] result=-1, time=0.00ms
 
+🎄 running solutions/day_eleven/day_eleven.go...
+[day eleven / part one] result=220722, time=1.37ms
+[day eleven / part two] result=261952051690787, time=75.66ms
+
 🎄 running solutions/day_five/day_five.go...
-[day five / part one] result=6949, time=3.12ms
-[day five / part two] result=4145, time=6.03ms
+[day five / part one] result=6949, time=3.19ms
+[day five / part two] result=4145, time=6.12ms
 
 🧝 running solutions/day_four/day_four.go...
-[day four / part one] result=2534, time=2.23ms
-[day four / part two] result=1866, time=1.22ms
+[day four / part one] result=2534, time=2.44ms
+[day four / part two] result=1866, time=1.07ms
 
-🎄 running solutions/day_nine/day_nine.go...
-[day nine / part one] result=6448989155953, time=3.10ms
-[day nine / part two] result=6476642796832, time=1898.88ms
+🎅 running solutions/day_nine/day_nine.go...
+[day nine / part one] result=6448989155953, time=2.96ms
+[day nine / part two] result=6476642796832, time=2036.55ms
 
 🎄 running solutions/day_one/day_one.go...
-[day one / part one] result=1110981, time=0.22ms
-[day one / part two] result=24869388, time=0.30ms
+[day one / part one] result=1110981, time=0.25ms
+[day one / part two] result=24869388, time=0.32ms
 
 🎄 running solutions/day_seven/day_seven.go...
-[day seven / part one] result=1620690235709, time=1.46ms
-[day seven / part two] result=145397611075341, time=833.88ms
+[day seven / part one] result=1620690235709, time=1.63ms
+[day seven / part two] result=145397611075341, time=874.75ms
 
-🎅 running solutions/day_six/day_six.go...
-[day six / part one] result=4826, time=183.11ms
+🧝 running solutions/day_six/day_six.go...
+[day six / part one] result=4826, time=224.54ms
 [day six / part two] result=-1, time=0.00ms
 
 🎁 running solutions/day_ten/day_ten.go...
-[day ten / part one] result=512, time=245.15ms
-[day ten / part two] result=1045, time=180.98ms
+[day ten / part one] result=512, time=274.71ms
+[day ten / part two] result=1045, time=200.28ms
 
-🎁 running solutions/day_three/day_three.go...
-[day three / part one] result=183669043, time=0.78ms
-[day three / part two] result=59097164, time=14.28ms
+🧝 running solutions/day_three/day_three.go...
+[day three / part one] result=183669043, time=0.88ms
+[day three / part two] result=59097164, time=14.72ms
 
-🎁 running solutions/day_two/day_two.go...
-[day two / part one] result=442, time=0.53ms
-[day two / part two] result=493, time=0.81ms
+🎅 running solutions/day_two/day_two.go...
+[day two / part one] result=442, time=0.50ms
+[day two / part two] result=493, time=0.82ms
 
 ```
 
@@ -87,9 +91,8 @@ ok      github.com/chancehl/advent-of-code-2024/ds      (cached)
 ok      github.com/chancehl/advent-of-code-2024/generator       (cached)
 ok      github.com/chancehl/advent-of-code-2024/generator/template      (cached)
 ok      github.com/chancehl/advent-of-code-2024/solutions/day_eight     (cached)
-?       github.com/chancehl/advent-of-code-2024/utils   [no test files]
-?       github.com/chancehl/advent-of-code-2024/utils/slices    [no test files]
-ok      github.com/chancehl/advent-of-code-2024/solutions/day_five      0.679s
+ok      github.com/chancehl/advent-of-code-2024/solutions/day_eleven    (cached)
+ok      github.com/chancehl/advent-of-code-2024/solutions/day_five      (cached)
 ok      github.com/chancehl/advent-of-code-2024/solutions/day_four      (cached)
 ok      github.com/chancehl/advent-of-code-2024/solutions/day_nine      (cached)
 ok      github.com/chancehl/advent-of-code-2024/solutions/day_one       (cached)
@@ -97,9 +100,11 @@ ok      github.com/chancehl/advent-of-code-2024/solutions/day_seven     (cached)
 ok      github.com/chancehl/advent-of-code-2024/solutions/day_six       (cached)
 ok      github.com/chancehl/advent-of-code-2024/solutions/day_ten       (cached)
 ok      github.com/chancehl/advent-of-code-2024/solutions/day_three     (cached)
+?       github.com/chancehl/advent-of-code-2024/utils   [no test files]
 ok      github.com/chancehl/advent-of-code-2024/solutions/day_two       (cached)
 ok      github.com/chancehl/advent-of-code-2024/utils/input     (cached)
 ok      github.com/chancehl/advent-of-code-2024/utils/math      (cached)
+?       github.com/chancehl/advent-of-code-2024/utils/slices    [no test files]
 ok      github.com/chancehl/advent-of-code-2024/utils/random    (cached)
 ok      github.com/chancehl/advent-of-code-2024/utils/timer     (cached)
 ```

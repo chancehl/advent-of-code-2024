@@ -9,7 +9,7 @@ import (
 func TestExecuteTimedFunc(t *testing.T) {
 	tests := []struct {
 		name            string
-		mockFunc        ExecutableFunc
+		mockFunc        ExecutableFunc[int]
 		input           string
 		expectedResult  int
 		expectedMinTime float64
