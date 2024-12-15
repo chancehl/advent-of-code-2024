@@ -6,14 +6,6 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-type OrderedWithCustom[T any] interface {
-	LessThan(other T) bool
-}
-
-type ComparableOrdered interface {
-	constraints.Ordered
-}
-
 type DirectedGraphPath[T comparable] []T
 
 type DirectedGraph[T comparable] struct {

@@ -2,9 +2,9 @@ package timer
 
 import "time"
 
-type ExecutableFunc func(input string) int
+type ExecutableFunc[T int | int64] func(input string) T
 
-func ExecuteTimedFunc(f ExecutableFunc, input string) (int, float64) {
+func ExecuteTimedFunc[T int | int64](f ExecutableFunc[T], input string) (T, float64) {
 	start := time.Now()
 	result := f(input)
 	end := time.Since(start).Seconds() * 1000

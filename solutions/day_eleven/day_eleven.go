@@ -29,7 +29,7 @@ func main() {
 	dayElevenSolution(input)
 }
 
-func dayElevenSolution(input string) (int, int) {
+func dayElevenSolution(input string) (int64, int64) {
 	partOneResult, partOneRuntime := timer.ExecuteTimedFunc(PartOne, input)
 	partTwoResult, partTwoRuntime := timer.ExecuteTimedFunc(PartTwo, input)
 
@@ -39,16 +39,20 @@ func dayElevenSolution(input string) (int, int) {
 	return partOneResult, partTwoResult
 }
 
-func PartOne(input string) int {
-	stones := ParseStones(input)
-	for i := 0; i < NumberOfBlinksP1; i++ {
-		stones = Blink(stones)
+func PartOne(input string) int64 {
+	var sum int64 = 0
+	for _, stone := range ParseStones(input) {
+		sum += Blink(stone, NumberOfBlinksP1)
 	}
-	return len(stones)
+	return sum
 }
 
-func PartTwo(input string) int {
-	return -1
+func PartTwo(input string) int64 {
+	var sum int64 = 0
+	for _, stone := range ParseStones(input) {
+		sum += Blink(stone, NumberOfBlinksP2)
+	}
+	return sum
 }
 
 func ParseStones(input string) []int {
@@ -60,25 +64,28 @@ func ParseStones(input string) []int {
 	return stones
 }
 
-func Blink(stones []int) []int {
-	updated := []int{}
-	for _, stone := range stones {
-		updated = append(updated, BlinkStone(stone)...)
-	}
-	return updated
-}
+var memo = make(map[string]int64)
 
-func BlinkStone(stone int) []int {
-	updated := []int{}
-	if stone == 0 {
-		updated = append(updated, 1)
+func Blink(stone int, blinks int) int64 {
+	key := fmt.Sprintf("%d:%d", stone, blinks)
+
+	if count, exists := memo[key]; exists {
+		return count
+	}
+
+	var result int64
+
+	if blinks == 0 {
+		result = 1
+	} else if stone == 0 {
+		result = Blink(1, blinks-1)
 	} else if math.CountDigits(stone)%2 == 0 {
 		left, right := math.SplitNumber(stone)
-
-		updated = append(updated, left)
-		updated = append(updated, right)
+		result = Blink(left, blinks-1) + Blink(right, blinks-1)
 	} else {
-		updated = append(updated, stone*2024)
+		result = Blink(stone*2024, blinks-1)
 	}
-	return updated
+
+	memo[key] = result
+	return result
 }

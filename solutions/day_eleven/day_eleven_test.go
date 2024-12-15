@@ -6,7 +6,7 @@ import (
 
 type testCase struct {
 	input    string
-	expected int
+	expected int64
 }
 
 func TestPartOne(t *testing.T) {
@@ -26,7 +26,7 @@ func TestPartOne(t *testing.T) {
 
 func TestPartTwo(t *testing.T) {
 	var tests = []testCase{
-		{input: "125 17", expected: 55312},
+		{input: "125 17", expected: 65601038650482},
 	}
 
 	for _, test := range tests {
