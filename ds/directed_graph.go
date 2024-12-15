@@ -1,8 +1,6 @@
 package ds
 
 import (
-	"fmt"
-	"slices"
 	"sort"
 
 	"golang.org/x/exp/constraints"
@@ -56,23 +54,30 @@ func (g DirectedGraph[T]) Vertices() []T {
 	return vertices
 }
 
-func (g DirectedGraph[T]) Get(key T) []T {
-	keys := g.edges[key]
-	sort.Slice(keys, func(i, j int) bool {
-		return g.comparator(keys[i], keys[j])
+func (g DirectedGraph[T]) GetNeighbors(vertex T) []T {
+	neighbors := g.edges[vertex]
+	sort.Slice(neighbors, func(i, j int) bool {
+		return g.comparator(neighbors[i], neighbors[j])
 	})
-	return keys
+	return neighbors
 }
 
-func (g DirectedGraph[T]) Insert(key T, value T) error {
-	if g.edges[key] != nil && slices.Contains(g.edges[key], value) {
-		return fmt.Errorf("value already exists in adjacency list (nodes=%v)", g.edges[key])
+func (g DirectedGraph[T]) AddVertex(vertex T) {
+	if _, exists := g.edges[vertex]; !exists {
+		g.edges[vertex] = []T{}
+	}
+}
+
+func (g DirectedGraph[T]) AddEdge(vertex T, neighbor T) {
+	if _, exists := g.edges[vertex]; !exists {
+		g.AddVertex(vertex)
+	}
+	if _, exists := g.edges[neighbor]; !exists {
+		g.AddVertex(neighbor)
 	}
 
-	updated := append(g.edges[key], value)
-	g.edges[key] = updated
-
-	return nil
+	updated := append(g.edges[vertex], neighbor)
+	g.edges[vertex] = updated
 }
 
 func (g DirectedGraph[T]) TopologicalSort() []T {
@@ -90,7 +95,7 @@ func (g DirectedGraph[T]) TopologicalSort() []T {
 				visited[v] = true
 
 				// visit neighbors
-				for _, neighbor := range g.Get(v) {
+				for _, neighbor := range g.GetNeighbors(v) {
 					if !visited[neighbor] {
 						dfs(neighbor)
 					}
@@ -127,7 +132,7 @@ func (g DirectedGraph[T]) FindPath(start T, end T) DirectedGraphPath[T] {
 			return *currentPath
 		}
 
-		for _, neighbor := range g.Get(lastNode) {
+		for _, neighbor := range g.GetNeighbors(lastNode) {
 			newPath := DirectedGraphPath[T]{}
 			newPath = append(newPath, *currentPath...)
 			newPath = append(newPath, neighbor)
@@ -157,7 +162,7 @@ func (g DirectedGraph[T]) FindDistinctPaths(start T, end T) []DirectedGraphPath[
 			paths = append(paths, *currentPath)
 		}
 
-		for _, neighbor := range g.Get(lastNode) {
+		for _, neighbor := range g.GetNeighbors(lastNode) {
 			if !currentPath.HasBeenVisited(neighbor) {
 				newPath := DirectedGraphPath[T]{}
 				newPath = append(newPath, neighbor)

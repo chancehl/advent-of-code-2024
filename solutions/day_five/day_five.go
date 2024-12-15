@@ -99,7 +99,7 @@ func PartTwo(input string) int {
 
 			for _, rule := range manual.findRelevantRules(update) {
 				if slices.Contains(update, rule.left) && slices.Contains(update, rule.right) {
-					graph.Insert(rule.left, rule.right)
+					graph.AddEdge(rule.left, rule.right)
 				}
 			}
 

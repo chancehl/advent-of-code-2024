@@ -111,37 +111,23 @@ func CreateGraph(matrix [][]int) ds.DirectedGraph[ds.Coordinates] {
 			current := matrix[row][col]
 
 			// up
-			if row > 0 {
-				next := matrix[row-1][col]
-				if next == current+1 {
-					graph.Insert(coords, ds.Coordinates{Row: row - 1, Col: col})
-				}
+			if row > 0 && matrix[row-1][col] == current+1 {
+				graph.AddEdge(coords, ds.Coordinates{Row: row - 1, Col: col})
 			}
 
 			// down
-			if row < len(matrix)-1 {
-				next := matrix[row+1][col]
-				if next == current+1 {
-					graph.Insert(coords, ds.Coordinates{Row: row + 1, Col: col})
-
-				}
+			if row < len(matrix)-1 && matrix[row+1][col] == current+1 {
+				graph.AddEdge(coords, ds.Coordinates{Row: row + 1, Col: col})
 			}
 
 			// left
-			if col > 0 {
-				next := matrix[row][col-1]
-				if next == current+1 {
-					graph.Insert(coords, ds.Coordinates{Row: row, Col: col - 1})
-				}
+			if col > 0 && matrix[row][col-1] == current+1 {
+				graph.AddEdge(coords, ds.Coordinates{Row: row, Col: col - 1})
 			}
 
 			// right
-			if col < len(matrix[0])-1 {
-				next := matrix[row][col+1]
-				if next == current+1 {
-					graph.Insert(coords, ds.Coordinates{Row: row, Col: col + 1})
-
-				}
+			if col < len(matrix[0])-1 && matrix[row][col+1] == current+1 {
+				graph.AddEdge(coords, ds.Coordinates{Row: row, Col: col + 1})
 			}
 		}
 	}
@@ -150,13 +136,13 @@ func CreateGraph(matrix [][]int) ds.DirectedGraph[ds.Coordinates] {
 }
 
 func FindCoordinates(matrix [][]int, marker int) []ds.Coordinates {
-	trailheads := []ds.Coordinates{}
+	coords := []ds.Coordinates{}
 	for row := range matrix {
 		for col := range matrix[0] {
 			if matrix[row][col] == marker {
-				trailheads = append(trailheads, ds.Coordinates{Row: row, Col: col})
+				coords = append(coords, ds.Coordinates{Row: row, Col: col})
 			}
 		}
 	}
-	return trailheads
+	return coords
 }

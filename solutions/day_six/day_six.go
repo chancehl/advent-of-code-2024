@@ -84,37 +84,33 @@ func Create2DMatrixFromInput(input string) PatrolMap {
 	return patrolMap
 }
 
-func CreateGraphFromInput(input string) ds.DirectedGraph[string] {
-	graph := ds.NewDirectedGraph[string](ds.DefaultComparator)
+func CreateGraphFromInput(input string) ds.DirectedGraph[ds.Coordinates] {
+	graph := ds.NewDirectedGraph[ds.Coordinates](ds.CoordinateComparator)
 
 	patrolMap := Create2DMatrixFromInput(input)
 
 	for row := range patrolMap {
 		for col := range patrolMap[row] {
-			key := fmt.Sprintf("%d,%d", row, col)
+			coords := ds.Coordinates{Row: row, Col: col}
 
 			// up neighbor
 			if row >= 1 && patrolMap[row-1][col] != "#" {
-				value := fmt.Sprintf("%d,%d", row-1, col)
-				graph.Insert(key, value)
+				graph.AddEdge(coords, ds.Coordinates{Row: row - 1, Col: col})
 			}
 
 			// down neighbor
 			if row < len(patrolMap)-1 && patrolMap[row+1][col] != "#" {
-				value := fmt.Sprintf("%d,%d", row+1, col)
-				graph.Insert(key, value)
+				graph.AddEdge(coords, ds.Coordinates{Row: row + 1, Col: col})
 			}
 
 			// left neighbor
 			if col >= 1 && patrolMap[row][col-1] != "#" {
-				value := fmt.Sprintf("%d,%d", row, col-1)
-				graph.Insert(key, value)
+				graph.AddEdge(coords, ds.Coordinates{Row: row, Col: col - 1})
 			}
 
 			// right neighbor
 			if col < len(patrolMap[0])-1 && patrolMap[row][col+1] != "#" {
-				value := fmt.Sprintf("%d,%d", row, col+1)
-				graph.Insert(key, value)
+				graph.AddEdge(coords, ds.Coordinates{Row: row, Col: col + 1})
 			}
 		}
 	}
