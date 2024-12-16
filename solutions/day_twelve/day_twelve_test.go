@@ -20,7 +20,22 @@ func TestPartOne(t *testing.T) {
 				BBCC
 				EEEC
 			`),
-			expected: -1,
+			expected: 140,
+		},
+		{
+			input: utils.Dedent(`
+				RRRRIICCFF
+				RRRRIICCCF
+				VVRRRCCFFF
+				VVRCCCJFFF
+				VVVVCJJCFE
+				VVIVCCJJEE
+				VVIIICJJEE
+				MIIIIIJJEE
+				MIIISIJEEE
+				MMMISSJEEE
+			`),
+			expected: 1930,
 		},
 	}
 

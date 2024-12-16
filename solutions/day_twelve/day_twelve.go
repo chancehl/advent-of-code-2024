@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
-	"strings"
 
 	"github.com/chancehl/advent-of-code-2024/ds"
 	"github.com/chancehl/advent-of-code-2024/utils/input"
 	"github.com/chancehl/advent-of-code-2024/utils/timer"
 )
+
+type ElfPlot struct {
+	id   string
+	land []ds.Coordinates
+}
 
 func main() {
 	path, err := filepath.Abs("solutions/day_twelve/input.txt")
@@ -36,27 +40,26 @@ func dayTwelveSolution(input string) (int, int) {
 }
 
 func PartOne(input string) int {
-	matrix := Create2DMatrix(input)
+	matrix := ds.CreateStringMatrix(input)
 	ids := GetPlotIdentifiers(matrix)
+
+	totalPrice := 0
 
 	for _, id := range ids {
 		plots := FindPlots(id, matrix)
-		fmt.Println(id, plots)
+		for _, plot := range plots {
+			area := plot.ComputeArea()
+			perimiter := plot.ComputePerimeter(matrix)
+			price := area * perimiter
+			totalPrice += price
+		}
 	}
 
-	return -1
+	return totalPrice
 }
 
 func PartTwo(input string) int {
 	return -1
-}
-
-func Create2DMatrix(input string) [][]string {
-	matrix := [][]string{}
-	for _, line := range strings.Split(input, "\n") {
-		matrix = append(matrix, strings.Split(line, ""))
-	}
-	return matrix
 }
 
 func GetPlotIdentifiers(matrix [][]string) []string {
@@ -69,29 +72,24 @@ func GetPlotIdentifiers(matrix [][]string) []string {
 	return identifiers.Values()
 }
 
-func FindPlots(id string, matrix [][]string) int {
+func FindPlots(id string, matrix ds.Matrix[string]) []ElfPlot {
 	visited := ds.NewSet[ds.Coordinates]()
-	plots := 0
+	plots := []ElfPlot{}
 
-	var bfs func(ds.Coordinates) = func(c ds.Coordinates) {
+	var bfs func(ds.Coordinates, *ElfPlot) = func(c ds.Coordinates, plot *ElfPlot) {
 		queue := ds.NewQueue[ds.Coordinates]()
 		queue.Enqueue(c)
 		visited.Add(c)
 
-		for queue.Size() > 0 {
+		for !queue.IsEmpty() {
 			current := queue.Dequeue()
 
-			directions := []ds.Coordinates{
-				{Row: current.Row - 1, Col: current.Col}, // up
-				{Row: current.Row + 1, Col: current.Col}, // down
-				{Row: current.Row, Col: current.Col - 1}, // left
-				{Row: current.Row, Col: current.Col + 1}, // right
-			}
-
-			for _, direction := range directions {
-				if !visited.Has(direction) && IsInBounds(matrix, direction) && matrix[direction.Row][direction.Col] == id {
+			for _, direction := range ds.GetInBoundsNeighbors(current, matrix) {
+				if !visited.Has(direction) && matrix[direction.Row][direction.Col] == id {
 					queue.Enqueue(direction)
 					visited.Add(direction)
+
+					plot.land = append(plot.land, direction)
 				}
 			}
 		}
@@ -101,8 +99,9 @@ func FindPlots(id string, matrix [][]string) int {
 		for col := range matrix[0] {
 			coords := ds.Coordinates{Row: row, Col: col}
 			if !visited.Has(coords) && matrix[row][col] == id {
-				bfs(coords)
-				plots++
+				plot := ElfPlot{id: id, land: []ds.Coordinates{coords}}
+				bfs(coords, &plot)
+				plots = append(plots, plot)
 			}
 		}
 	}
@@ -110,6 +109,21 @@ func FindPlots(id string, matrix [][]string) int {
 	return plots
 }
 
-func IsInBounds(matrix [][]string, coords ds.Coordinates) bool {
-	return coords.Row > 0 && coords.Row < len(matrix)-1 && coords.Col > 0 && coords.Col < len(matrix[0])-1
+func (p ElfPlot) ComputeArea() int {
+	return len(p.land)
+}
+
+func (p ElfPlot) ComputePerimeter(matrix ds.Matrix[string]) int {
+	perimeter := 0
+	for _, space := range p.land {
+		neighbors := ds.GetNeighbors(space)
+		for _, neighbor := range neighbors {
+			if matrix.IsCoordInBounds(neighbor) && matrix[neighbor.Row][neighbor.Col] != p.id {
+				perimeter++
+			} else if !matrix.IsCoordInBounds(neighbor) {
+				perimeter++
+			}
+		}
+	}
+	return perimeter
 }
