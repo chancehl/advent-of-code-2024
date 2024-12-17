@@ -59,7 +59,22 @@ func PartOne(input string) int {
 }
 
 func PartTwo(input string) int {
-	return -1
+	matrix := ds.CreateStringMatrix(input)
+	ids := GetPlotIdentifiers(matrix)
+
+	totalPrice := 0
+
+	for _, id := range ids {
+		plots := FindPlots(id, matrix)
+		for _, plot := range plots {
+			area := plot.ComputeArea()
+			sides := plot.ComputeSides()
+			price := area * sides
+			totalPrice += price
+		}
+	}
+
+	return totalPrice
 }
 
 func GetPlotIdentifiers(matrix [][]string) []string {
@@ -126,4 +141,9 @@ func (p ElfPlot) ComputePerimeter(matrix ds.Matrix[string]) int {
 		}
 	}
 	return perimeter
+}
+
+func (p ElfPlot) ComputeSides() int {
+	sides := 0
+	return sides
 }

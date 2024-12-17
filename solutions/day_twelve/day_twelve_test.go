@@ -51,7 +51,15 @@ func TestPartOne(t *testing.T) {
 
 func TestPartTwo(t *testing.T) {
 	var tests = []testCase{
-		{input: "abcd", expected: -1},
+		{
+			input: utils.Dedent(`
+				AAAA
+				BBCD
+				BBCC
+				EEEC
+			`),
+			expected: 80,
+		},
 	}
 
 	for _, test := range tests {
