@@ -5,6 +5,10 @@ type Coordinates struct {
 	Col int
 }
 
+func NewCoordinate(row, col int) Coordinates {
+	return Coordinates{Row: row, Col: col}
+}
+
 // Implement the LessThan method for Coordinates
 func (c Coordinates) LessThan(other Coordinates) bool {
 	if c.Row < other.Row {
@@ -18,6 +22,10 @@ func (c Coordinates) LessThan(other Coordinates) bool {
 
 func CoordinateComparator(a, b Coordinates) bool {
 	return a.LessThan(b)
+}
+
+func (c Coordinates) Equals(other Coordinates) bool {
+	return c.Row == other.Row && c.Col == other.Col
 }
 
 // Returns the coordinate "nieghbors" (up, down, left, right)

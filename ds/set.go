@@ -13,7 +13,7 @@ func NewSet[T comparable]() Set[T] {
 	return Set[T]{data: make(map[T]bool)}
 }
 
-func From[T comparable](vals []T) Set[T] {
+func NewSetFrom[T comparable](vals []T) Set[T] {
 	set := NewSet[T]()
 	for _, val := range vals {
 		set.Add(val)

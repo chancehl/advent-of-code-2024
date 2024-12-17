@@ -15,6 +15,15 @@ type ElfPlot struct {
 	land []ds.Coordinates
 }
 
+type Direction int
+
+const (
+	Up Direction = iota
+	Down
+	Left
+	Right
+)
+
 func main() {
 	path, err := filepath.Abs("solutions/day_twelve/input.txt")
 	if err != nil {
@@ -50,8 +59,7 @@ func PartOne(input string) int {
 		for _, plot := range plots {
 			area := plot.ComputeArea()
 			perimiter := plot.ComputePerimeter(matrix)
-			price := area * perimiter
-			totalPrice += price
+			totalPrice += area * perimiter
 		}
 	}
 
@@ -68,9 +76,9 @@ func PartTwo(input string) int {
 		plots := FindPlots(id, matrix)
 		for _, plot := range plots {
 			area := plot.ComputeArea()
-			sides := plot.ComputeSides()
-			price := area * sides
-			totalPrice += price
+			sides := plot.ComputeSides(matrix)
+			fmt.Printf("plot %s has %d sides\n", plot.id, sides)
+			totalPrice += area * sides
 		}
 	}
 
@@ -143,7 +151,7 @@ func (p ElfPlot) ComputePerimeter(matrix ds.Matrix[string]) int {
 	return perimeter
 }
 
-func (p ElfPlot) ComputeSides() int {
+func (p ElfPlot) ComputeSides(matrix ds.Matrix[string]) int {
 	sides := 0
 	return sides
 }
