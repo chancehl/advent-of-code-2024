@@ -43,6 +43,22 @@ func GetNeighbors(c Coordinates) []Coordinates {
 	}
 }
 
+func (c Coordinates) GetRightNeighbor() Coordinates {
+	return Coordinates{Row: c.Row, Col: c.Col + 1}
+}
+
+func (c Coordinates) GetLeftNeighbor() Coordinates {
+	return Coordinates{Row: c.Row, Col: c.Col - 1}
+}
+
+func (c Coordinates) GetUpNeighbor() Coordinates {
+	return Coordinates{Row: c.Row - 1, Col: c.Col}
+}
+
+func (c Coordinates) GetDownNeighbor() Coordinates {
+	return Coordinates{Row: c.Row + 1, Col: c.Col}
+}
+
 // Returns the coordinate "nieghbors" (up, down, left, right) if they are in bounds
 func GetInBoundsNeighbors[T int | string](c Coordinates, matrix Matrix[T]) []Coordinates {
 	valid := []Coordinates{}

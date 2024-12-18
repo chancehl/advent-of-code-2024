@@ -15,6 +15,11 @@ type ElfPlot struct {
 	land []ds.Coordinates
 }
 
+type ElfPlotBoundary struct {
+	coord ds.Coordinates
+	dir   Direction
+}
+
 type Direction string
 
 const (
@@ -59,7 +64,8 @@ func PartOne(input string) int {
 		for _, plot := range plots {
 			area := plot.ComputeArea()
 			perimiter := plot.ComputePerimeter(matrix)
-			totalPrice += area * perimiter
+
+			totalPrice += area * len(perimiter)
 		}
 	}
 
@@ -73,11 +79,10 @@ func PartTwo(input string) int {
 	totalPrice := 0
 
 	for _, id := range ids {
-		plots := FindPlots(id, matrix)
-		for _, plot := range plots {
+		for _, plot := range FindPlots(id, matrix) {
 			area := plot.ComputeArea()
 			sides := plot.ComputeSides(matrix)
-			fmt.Printf("plot %s has %d sides\n", plot.id, sides)
+
 			totalPrice += area * sides
 		}
 	}
@@ -89,7 +94,9 @@ func GetPlotIdentifiers(matrix [][]string) []string {
 	identifiers := ds.NewSet[string]()
 	for row := range matrix {
 		for col := range matrix[0] {
-			identifiers.Add(matrix[row][col])
+			if matrix[row][col] != "." {
+				identifiers.Add(matrix[row][col])
+			}
 		}
 	}
 	return identifiers.Values()
@@ -136,22 +143,126 @@ func (p ElfPlot) ComputeArea() int {
 	return len(p.land)
 }
 
-func (p ElfPlot) ComputePerimeter(matrix ds.Matrix[string]) int {
-	perimeter := 0
+func (p ElfPlot) ComputePerimeter(matrix ds.Matrix[string]) []ElfPlotBoundary {
+	perimeter := []ElfPlotBoundary{}
 	for _, space := range p.land {
-		neighbors := ds.GetNeighbors(space)
-		for _, neighbor := range neighbors {
+		neighbors := ds.GetNeighborsInOrder(space, "RDLU")
+		for idx, neighbor := range neighbors {
 			if matrix.IsCoordInBounds(neighbor) && matrix[neighbor.Row][neighbor.Col] != p.id {
-				perimeter++
+				perimeter = append(perimeter, ElfPlotBoundary{coord: neighbor, dir: GetDirectionFromIndex(idx)})
 			} else if !matrix.IsCoordInBounds(neighbor) {
-				perimeter++
+				perimeter = append(perimeter, ElfPlotBoundary{coord: neighbor, dir: GetDirectionFromIndex(idx)})
 			}
 		}
 	}
 	return perimeter
 }
 
+type BoundaryGraph struct {
+	nodes map[ds.Coordinates][]Direction
+}
+
+func BuildBoundaryGraph(perimeter []ElfPlotBoundary) BoundaryGraph {
+	graph := BoundaryGraph{nodes: make(map[ds.Coordinates][]Direction)}
+	for _, boundary := range perimeter {
+		graph.nodes[boundary.coord] = append(graph.nodes[boundary.coord], boundary.dir)
+	}
+	return graph
+}
+
+// i give up
+// this one does not work for irregular shapes like "C" in the test input. oh well.
 func (p ElfPlot) ComputeSides(matrix ds.Matrix[string]) int {
 	sides := 0
+	perimiter := p.ComputePerimeter(matrix)
+
+	start := perimiter[0]
+	curr := perimiter[0]
+	visited := ds.NewSet[ElfPlotBoundary]()
+
+	for shouldContinue := true; shouldContinue; shouldContinue = start != curr {
+		if curr.dir == "D" {
+			// find left neighbor with dir D
+			if exists, neighbor := CheckNeighbors(perimiter, ds.NewCoordinate(curr.coord.Row, curr.coord.Col-1), Down); exists && !visited.Has(*neighbor) {
+				curr = *neighbor
+				visited.Add(*neighbor)
+				continue
+			}
+			// if that doesn't exist, then let's find an up-left neighbor
+			if exists, neighbor := CheckNeighbors(perimiter, ds.NewCoordinate(curr.coord.Row-1, curr.coord.Col-1), Left); exists && !visited.Has(*neighbor) {
+				curr = *neighbor
+				visited.Add(*neighbor)
+				sides++
+				continue
+			}
+			// we have no valid moves, so stop
+			break
+		} else if curr.dir == "L" {
+			// find up neighbor with dir L
+			if exists, neighbor := CheckNeighbors(perimiter, ds.NewCoordinate(curr.coord.Row, curr.coord.Col-1), Left); exists && !visited.Has(*neighbor) {
+				curr = *neighbor
+				visited.Add(*neighbor)
+				continue
+			}
+			// if that doesn't exist, then let's find an up-right neighbor
+			if exists, neighbor := CheckNeighbors(perimiter, ds.NewCoordinate(curr.coord.Row-1, curr.coord.Col+1), Up); exists && !visited.Has(*neighbor) {
+				curr = *neighbor
+				visited.Add(*neighbor)
+				sides++
+				continue
+			}
+			// we have no valid moves, so stop
+			break
+		} else if curr.dir == "U" {
+			// find right neighbor with dir U
+			if exists, neighbor := CheckNeighbors(perimiter, ds.NewCoordinate(curr.coord.Row, curr.coord.Col+1), Up); exists && !visited.Has(*neighbor) {
+				curr = *neighbor
+				visited.Add(*neighbor)
+				continue
+			}
+			// if that doesn't exist, then let's find a down-right neighbor
+			if exists, neighbor := CheckNeighbors(perimiter, ds.NewCoordinate(curr.coord.Row+1, curr.coord.Col+1), Right); exists && !visited.Has(*neighbor) {
+				curr = *neighbor
+				visited.Add(*neighbor)
+				sides++
+				continue
+			}
+			// we have no valid moves, so stop
+			break
+		} else if curr.dir == "R" {
+			// find down neighbor with dir R
+			if exists, neighbor := CheckNeighbors(perimiter, ds.NewCoordinate(curr.coord.Row+1, curr.coord.Col), Right); exists && !visited.Has(*neighbor) {
+				curr = *neighbor
+				visited.Add(*neighbor)
+				continue
+			}
+			// if that doesn't exist, then let's find a down-left nieghbor
+			if exists, neighbor := CheckNeighbors(perimiter, ds.NewCoordinate(curr.coord.Row+1, curr.coord.Col-1), Down); exists && !visited.Has(*neighbor) {
+				curr = *neighbor
+				visited.Add(*neighbor)
+				sides++
+				continue
+			}
+			// we have no valid moves, so stop
+			break
+		}
+	}
+
 	return sides
+}
+
+func CheckNeighbors(perimiter []ElfPlotBoundary, coord ds.Coordinates, dir Direction) (bool, *ElfPlotBoundary) {
+	for _, boundary := range perimiter {
+		if boundary.coord.Row == coord.Row && boundary.coord.Col == coord.Col && boundary.dir == dir {
+			return true, &boundary
+		}
+	}
+	return false, nil
+}
+
+func GetDirectionFromIndex(idx int) Direction {
+	if idx < 0 || idx > 4 {
+		panic("GetDirectionFromIndex(idx) expects an index between 1-4")
+	}
+	return []Direction{"R", "D", "L", "U"}[idx]
 }
