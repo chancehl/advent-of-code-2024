@@ -15,13 +15,13 @@ type ElfPlot struct {
 	land []ds.Coordinates
 }
 
-type Direction int
+type Direction string
 
 const (
-	Up Direction = iota
-	Down
-	Left
-	Right
+	Up    = "U"
+	Down  = "D"
+	Left  = "L"
+	Right = "R"
 )
 
 func main() {

@@ -1,5 +1,7 @@
 package ds
 
+import "strings"
+
 type Coordinates struct {
 	Row int
 	Col int
@@ -50,4 +52,29 @@ func GetInBoundsNeighbors[T int | string](c Coordinates, matrix Matrix[T]) []Coo
 		}
 	}
 	return valid
+}
+
+func GetNeighborsInOrder(c Coordinates, order string) []Coordinates {
+	up := Coordinates{Row: c.Row - 1, Col: c.Col}    // up
+	down := Coordinates{Row: c.Row + 1, Col: c.Col}  // down
+	left := Coordinates{Row: c.Row, Col: c.Col - 1}  // left
+	right := Coordinates{Row: c.Row, Col: c.Col + 1} // right
+
+	ordered := []Coordinates{}
+
+	for _, char := range strings.Split(order, "") {
+		if char == "U" {
+			ordered = append(ordered, up)
+		} else if char == "D" {
+			ordered = append(ordered, down)
+		} else if char == "L" {
+			ordered = append(ordered, left)
+		} else if char == "R" {
+			ordered = append(ordered, right)
+		} else {
+			panic("character needs to be one of: U, D, L, R")
+		}
+	}
+
+	return ordered
 }
